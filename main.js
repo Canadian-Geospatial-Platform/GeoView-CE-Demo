@@ -5109,7 +5109,9 @@ var App = function () {
             (_a = buttonPanel === null || buttonPanel === void 0 ? void 0 : buttonPanel.panel) === null || _a === void 0 ? void 0 : _a.changeContent((0,jsx_runtime.jsx)(PanelContent, { buttonPanel: buttonPanel, mapId: 'mapWM' }));
         });
     }, []);
-    return ((0,jsx_runtime.jsx)("div", { id: "mapWM", className: "llwp-map ".concat(classes.container), "data-leaflet": "{ 'name': 'Web Mercator', 'projection': 3857, 'zoom': 4, 'center': [60,-100], 'language': 'en-CA', 'basemapOptions': { 'id': 'transport', 'shaded': false, 'labeled': true }, 'layers': [] } " }));
+    return ((0,jsx_runtime.jsx)("div", { id: "mapWM", className: "llwp-map ".concat(classes.container), style: {
+            height: '100vh',
+        }, "data-leaflet": "{ 'name': 'Web Mercator', 'projection': 3857, 'zoom': 4, 'center': [60,-100], 'language': 'en-CA', 'basemapOptions': { 'id': 'transport', 'shaded': false, 'labeled': true }, 'layers': [] } " }));
 };
 /* harmony default export */ const components_App = (App);
 
