@@ -5111,6 +5111,7 @@ var App = function () {
     }, []);
     return ((0,jsx_runtime.jsx)("div", { id: "mapWM", className: "llwp-map ".concat(classes.container), style: {
             height: '100vh',
+            zIndex: 0,
         }, "data-leaflet": "{ 'name': 'Web Mercator', 'projection': 3857, 'zoom': 4, 'center': [60,-100], 'language': 'en-CA', 'basemapOptions': { 'id': 'transport', 'shaded': false, 'labeled': true }, 'layers': [] } " }));
 };
 /* harmony default export */ const components_App = (App);
