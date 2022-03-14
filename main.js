@@ -451,7 +451,7 @@ var __webpack_unused_export__;
  * LICENSE file in the root directory of this source tree.
  */
 __webpack_require__(418);var f=__webpack_require__(294),g=60103;__webpack_unused_export__=60107;if("function"===typeof Symbol&&Symbol.for){var h=Symbol.for;g=h("react.element");__webpack_unused_export__=h("react.fragment")}var m=f.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.ReactCurrentOwner,n=Object.prototype.hasOwnProperty,p={key:!0,ref:!0,__self:!0,__source:!0};
-function q(c,a,k){var b,d={},e=null,l=null;void 0!==k&&(e=""+k);void 0!==a.key&&(e=""+a.key);void 0!==a.ref&&(l=a.ref);for(b in a)n.call(a,b)&&!p.hasOwnProperty(b)&&(d[b]=a[b]);if(c&&c.defaultProps)for(b in a=c.defaultProps,a)void 0===d[b]&&(d[b]=a[b]);return{$$typeof:g,type:c,key:e,ref:l,props:d,_owner:m.current}}exports.jsx=q;__webpack_unused_export__=q;
+function q(c,a,k){var b,d={},e=null,l=null;void 0!==k&&(e=""+k);void 0!==a.key&&(e=""+a.key);void 0!==a.ref&&(l=a.ref);for(b in a)n.call(a,b)&&!p.hasOwnProperty(b)&&(d[b]=a[b]);if(c&&c.defaultProps)for(b in a=c.defaultProps,a)void 0===d[b]&&(d[b]=a[b]);return{$$typeof:g,type:c,key:e,ref:l,props:d,_owner:m.current}}exports.jsx=q;exports.jsxs=q;
 
 
 /***/ }),
@@ -5018,10 +5018,283 @@ function makeStyles(stylesOrCreator, options = {}) {
 
   return useStyles;
 }
-;// CONCATENATED MODULE: ./src/components/PanelContent.tsx
+;// CONCATENATED MODULE: ./src/utils/api.ts
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (undefined && undefined.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+var API_URL = 'https://geodata.dri.edu';
+/**
+ * Make a get request on an endpoint
+ *
+ * @param {string} endPoint the end point to use
+ * @param {string} token the authorization api key token
+ * @returns {Object} the result from the api call as a json object
+ */
+var httpGet = function (endPoint, token) { return __awaiter(void 0, void 0, void 0, function () {
+    var res, result, error_1;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 3, , 4]);
+                return [4 /*yield*/, fetch(API_URL + endPoint, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: token,
+                        },
+                    })];
+            case 1:
+                res = _a.sent();
+                return [4 /*yield*/, res.json()];
+            case 2:
+                result = _a.sent();
+                return [2 /*return*/, result];
+            case 3:
+                error_1 = _a.sent();
+                return [2 /*return*/, error_1];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); };
+/**
+ * Make a post request
+ *
+ * @param {string} endPoint the endpoint to use
+ * @param {Record<string,any>} data the data to post
+ * @param {string} token the token to authenticate with
+ */
+var httpPost = function (endPoint, data, token) { return __awaiter(void 0, void 0, void 0, function () {
+    var res, result, error_2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 3, , 4]);
+                return [4 /*yield*/, fetch(API_URL + endPoint, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: token,
+                        },
+                        body: JSON.stringify(data),
+                    })];
+            case 1:
+                res = _a.sent();
+                return [4 /*yield*/, res.json()];
+            case 2:
+                result = _a.sent();
+                return [2 /*return*/, result];
+            case 3:
+                error_2 = _a.sent();
+                return [2 /*return*/, error_2];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); };
 
+;// CONCATENATED MODULE: ./src/utils/end_points.ts
+/**
+ * List of available end points to the swagger climate engine APIs
+ */
+var End_Points;
+(function (End_Points) {
+    /**
+     * Verify if the provided token is valid
+     */
+    End_Points["VALIDATE_KEY"] = "/home/validate_key";
+})(End_Points || (End_Points = {}));
+
+;// CONCATENATED MODULE: ./src/components/Login.tsx
+var __assign = (undefined && undefined.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+var Login_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var Login_generator = (undefined && undefined.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+
+
+
+
+// get reference to window object
 var w = window;
+// get reference to geoview apis
 var cgpv = w['cgpv'];
+var Login_makeStyles = cgpv.ui.makeStyles;
+var useStyles = Login_makeStyles(function (theme) { return ({
+    loginContainer: {
+        width: '100%',
+    },
+    loginTextInput: {
+        width: '100%',
+        marginBottom: 10,
+    },
+    loginBtn: {},
+    loginBtnText: {
+        textAlign: 'center',
+    },
+}); });
+/**
+ * Create a login component to save the API key
+ *
+ * @param {LoginProps} props properties passed to the login component
+ * @returns {JSX.Element} a login component
+ */
+var Login = function (props) {
+    var ui = cgpv.ui, mui = cgpv.mui, react = cgpv.react, api = cgpv.api;
+    var createRef = react.createRef, useContext = react.useContext;
+    var textFieldRef = createRef();
+    var state = useContext(StateContext);
+    var TextField = mui.TextField;
+    var Button = ui.elements.Button;
+    var mapId = state.mapId;
+    var classes = useStyles();
+    /**
+     * Login function
+     */
+    var login = function () { return Login_awaiter(void 0, void 0, void 0, function () {
+        var res;
+        return Login_generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, httpGet(End_Points.VALIDATE_KEY, textFieldRef.current.value)];
+                case 1:
+                    res = _a.sent();
+                    if (res.detail) {
+                        api.event.emit(api.eventNames.EVENT_SNACKBAR_OPEN, mapId, {
+                            message: {
+                                type: 'key',
+                                value: res.detail,
+                                params: [],
+                            },
+                        });
+                    }
+                    else {
+                        props.saveApiKey(textFieldRef.current.value);
+                    }
+                    return [2 /*return*/];
+            }
+        });
+    }); };
+    return ((0,jsx_runtime.jsxs)("div", __assign({ className: classes.loginContainer }, { children: [(0,jsx_runtime.jsx)(TextField, { id: "outlined-basic", label: "API Key Token", variant: "outlined", inputRef: textFieldRef, className: classes.loginTextInput }), (0,jsx_runtime.jsx)(Button, __assign({ tooltip: "Login", tooltipPlacement: "right", className: classes.loginBtn, type: "text", onClick: function () { return login(); } }, { children: (0,jsx_runtime.jsx)("div", __assign({ className: classes.loginBtnText }, { children: "Login" })) }))] })));
+};
+
+;// CONCATENATED MODULE: ./src/components/ClimateEngine.tsx
+var ClimateEngine_assign = (undefined && undefined.__assign) || function () {
+    ClimateEngine_assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return ClimateEngine_assign.apply(this, arguments);
+};
+
+var ClimateEngine_w = window;
+var ClimateEngine_cgpv = ClimateEngine_w['cgpv'];
+var ClimateEngine = function (props) {
+    var ui = ClimateEngine_cgpv.ui, mui = ClimateEngine_cgpv.mui, react = ClimateEngine_cgpv.react, types = ClimateEngine_cgpv.types;
+    var useState = react.useState, useEffect = react.useEffect;
+    var Button = ui.elements.Button;
+    return ((0,jsx_runtime.jsx)("div", { children: (0,jsx_runtime.jsx)(Button, ClimateEngine_assign({ tooltip: "Logout", tooltipPlacement: "right", type: "text", onClick: function () {
+                props.deleteApiKey();
+            } }, { children: "Logout" })) }));
+};
+
+;// CONCATENATED MODULE: ./src/components/PanelContent.tsx
+var PanelContent_assign = (undefined && undefined.__assign) || function () {
+    PanelContent_assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return PanelContent_assign.apply(this, arguments);
+};
+
+
+
+var PanelContent_w = window;
+var PanelContent_cgpv = PanelContent_w['cgpv'];
+var PanelContent_react = PanelContent_cgpv.react;
+var createContext = PanelContent_react.createContext;
+// context used to store and manage state
+var StateContext = createContext({});
 /**
  * Create a new panel content
  *
@@ -5029,10 +5302,46 @@ var cgpv = w['cgpv'];
  * @returns {JSX.Element} the new create panel content
  */
 var PanelContent = function (props) {
-    var buttonPanel = props.buttonPanel;
-    var ui = cgpv.ui;
-    var Button = ui.elements.Button;
-    return ((0,jsx_runtime.jsx)("div", { children: (0,jsx_runtime.jsx)("div", { children: "Test content" }) }));
+    var buttonPanel = props.buttonPanel, mapId = props.mapId;
+    var ui = PanelContent_cgpv.ui, mui = PanelContent_cgpv.mui, react = PanelContent_cgpv.react;
+    var useState = react.useState, useEffect = react.useEffect, useMemo = react.useMemo;
+    var _a = useState(), apiKey = _a[0], setApiKey = _a[1];
+    var auth = useMemo(function () {
+        return { apiKey: apiKey, setApiKey: setApiKey };
+    }, [apiKey]);
+    /**
+     * Save API key in local storage and login user
+     *
+     * @param {string} key the api key to store
+     */
+    var saveApiKey = function (key) {
+        localStorage.setItem('key', key);
+        console.log('test');
+        auth.setApiKey(key);
+    };
+    /**
+     * Get the API key from local storage
+     */
+    var getApiKey = function () {
+        var key = localStorage.getItem('key');
+        if (key) {
+            auth.setApiKey(key);
+        }
+    };
+    /**
+     * Delete the API key from local storage
+     */
+    var deleteApiKey = function () {
+        localStorage.removeItem('key');
+        auth.setApiKey(null);
+    };
+    useEffect(function () {
+        getApiKey();
+    }, []);
+    return ((0,jsx_runtime.jsx)(StateContext.Provider, PanelContent_assign({ value: {
+            auth: auth,
+            mapId: mapId,
+        } }, { children: !auth.apiKey ? ((0,jsx_runtime.jsx)(Login, { saveApiKey: saveApiKey })) : ((0,jsx_runtime.jsx)(ClimateEngine, { deleteApiKey: deleteApiKey, mapId: mapId, buttonPanel: buttonPanel })) })));
 };
 
 ;// CONCATENATED MODULE: ./public/locales/en-CA/translation.json
@@ -5047,7 +5356,7 @@ const fr_CA_translation_namespaceObject = JSON.parse('{"custom":{"panelTitle":"C
 /**
  * main container and map styling
  */
-var useStyles = makeStyles(function (theme) { return ({
+var App_useStyles = makeStyles(function (theme) { return ({
     container: {
         height: '100vh',
     },
@@ -5064,7 +5373,7 @@ var App_cgpv = App_w['cgpv'];
  * @returns {JSX.Elemet} the element that creates the container and the map
  */
 var App = function () {
-    var classes = useStyles();
+    var classes = App_useStyles();
     /**
      * initialize the map after it has been loaded
      */
@@ -5091,14 +5400,14 @@ var App = function () {
                 id: 'testPanelButton',
                 tooltip: translations[language].custom.panelTitle,
                 tooltipPlacement: 'right',
-                icon: '<i class="material-icons">details</i>',
+                icon: '<i class="material-icons">map</i>',
                 visible: true,
                 type: 'icon',
             };
             // panel props
             var panel = {
                 title: translations[language].custom.panelTitle,
-                icon: '<i class="material-icons">details</i>',
+                icon: '<i class="material-icons">map</i>',
                 width: 300,
             };
             // create a new button panel on the appbar
