@@ -5264,9 +5264,7 @@ var API = /** @class */ (function () {
         var result;
         return api_generator(_a, function (_b) {
             switch (_b.label) {
-                case 0:
-                    console.log(startDate);
-                    return [4 /*yield*/, httpGet("".concat(End_Points.TIMESERIES_POINTS, "/points?dataset=").concat(dataset, "&variable=").concat(variable, "&area_reducer=mean&start_date=").concat(startDate, "&end_date=").concat(endDate, "&coordinates=[[").concat(lng, ",").concat(lat, "]]"), apiKey)];
+                case 0: return [4 /*yield*/, httpGet("".concat(End_Points.TIMESERIES_POINTS, "/points?dataset=").concat(dataset, "&variable=").concat(variable, "&area_reducer=mean&start_date=").concat(startDate, "&end_date=").concat(endDate, "&coordinates=[[").concat(lng, ",").concat(lat, "]]"), apiKey)];
                 case 1:
                     result = _b.sent();
                     return [2 /*return*/, result];
