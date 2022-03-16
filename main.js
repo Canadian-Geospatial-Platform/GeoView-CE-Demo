@@ -5018,7 +5018,31 @@ function makeStyles(stylesOrCreator, options = {}) {
 
   return useStyles;
 }
-;// CONCATENATED MODULE: ./src/utils/api.ts
+;// CONCATENATED MODULE: ./src/utils/end_points.ts
+/**
+ * List of available end points to the swagger climate engine APIs
+ */
+var End_Points;
+(function (End_Points) {
+    /**
+     * Verify if the provided token is valid
+     */
+    End_Points["VALIDATE_KEY"] = "/home/validate_key";
+    /**
+     * Request map layers from a time period
+     */
+    End_Points["RASTER_MAPID"] = "/raster/mapid";
+    /**
+     * Get the time series
+     */
+    End_Points["TIMESERIES_POINTS"] = "/timeseries/native";
+    /**
+     * Get min and max time period
+     */
+    End_Points["DATASET_DATES"] = "/metadata/dataset_dates";
+})(End_Points || (End_Points = {}));
+
+;// CONCATENATED MODULE: ./src/utils/network.ts
 var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -5124,17 +5148,134 @@ var httpPost = function (endPoint, data, token) { return __awaiter(void 0, void 
     });
 }); };
 
-;// CONCATENATED MODULE: ./src/utils/end_points.ts
+;// CONCATENATED MODULE: ./src/utils/api.ts
+var api_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var api_generator = (undefined && undefined.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+
+
 /**
- * List of available end points to the swagger climate engine APIs
+ * Class contains API function for the CE
  */
-var End_Points;
-(function (End_Points) {
+var API = /** @class */ (function () {
+    function API() {
+    }
+    var _a;
+    _a = API;
     /**
-     * Verify if the provided token is valid
+     * Validate the provided token
+     *
+     * @param {string} token the token to validate
+     * @returns {Object} an object containing with success/fail message
      */
-    End_Points["VALIDATE_KEY"] = "/home/validate_key";
-})(End_Points || (End_Points = {}));
+    API.validateToken = function (token) { return api_awaiter(void 0, void 0, void 0, function () {
+        var result;
+        return api_generator(_a, function (_b) {
+            result = httpGet(End_Points.VALIDATE_KEY, token);
+            return [2 /*return*/, result];
+        });
+    }); };
+    /**
+     * Get the available date range for the catalog for a dataset
+     *
+     * @param {string} dataset the dataset to look for
+     * @param {string} apiKey Authentication token
+     *
+     * @returns {Object} An object with min/max available dates
+     */
+    API.getTimePeriodRange = function (dataset, apiKey) { return api_awaiter(void 0, void 0, void 0, function () {
+        var result;
+        return api_generator(_a, function (_b) {
+            switch (_b.label) {
+                case 0: return [4 /*yield*/, httpGet("".concat(End_Points.DATASET_DATES, "?dataset=").concat(dataset), apiKey)];
+                case 1:
+                    result = _b.sent();
+                    return [2 /*return*/, result];
+            }
+        });
+    }); };
+    /**
+     * Get a map layer with provided time period
+     *
+     * @param {string} dataset the dataset to use
+     * @param {string} variable the variable to use
+     * @param {string} startDate the start date time period
+     * @param {string} endDate the end date time period
+     * @param {string} apiKey The authentication token
+     * @returns {Object} an object containing the layer
+     */
+    API.getMapLayer = function (dataset, variable, startDate, endDate, apiKey) { return api_awaiter(void 0, void 0, void 0, function () {
+        var result;
+        return api_generator(_a, function (_b) {
+            switch (_b.label) {
+                case 0: return [4 /*yield*/, httpGet("".concat(End_Points.RASTER_MAPID, "/values?dataset=").concat(dataset, "&variable=").concat(variable, "&temporal_statistic=mean&start_date=").concat(startDate, "&end_date=").concat(endDate), apiKey)];
+                case 1:
+                    result = _b.sent();
+                    return [2 /*return*/, result];
+            }
+        });
+    }); };
+    /**
+     * Get a time series at specefic location and time period
+     *
+     * @param {number} lat a latitude point
+     * @param {number} lng a longtitude point
+     * @param {string} dataset the dataset to use
+     * @param {string} variable the variable to use
+     * @param {string} startDate the start date
+     * @param {string} endDate the end date
+     * @param {string} apiKey the authentication token
+     * @returns {Object} returns the time series on that point
+     */
+    API.getTimeSeries = function (lat, lng, dataset, variable, startDate, endDate, apiKey) { return api_awaiter(void 0, void 0, void 0, function () {
+        var result;
+        return api_generator(_a, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    console.log(startDate);
+                    return [4 /*yield*/, httpGet("".concat(End_Points.TIMESERIES_POINTS, "/points?dataset=").concat(dataset, "&variable=").concat(variable, "&area_reducer=mean&start_date=").concat(startDate, "&end_date=").concat(endDate, "&coordinates=[[").concat(lng, ",").concat(lat, "]]"), apiKey)];
+                case 1:
+                    result = _b.sent();
+                    return [2 /*return*/, result];
+            }
+        });
+    }); };
+    return API;
+}());
+
 
 ;// CONCATENATED MODULE: ./src/components/Login.tsx
 var __assign = (undefined && undefined.__assign) || function () {
@@ -5148,7 +5289,77 @@ var __assign = (undefined && undefined.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-var Login_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+
+
+
+// get reference to window object
+var w = window;
+// get reference to geoview apis
+var cgpv = w['cgpv'];
+var Login_makeStyles = cgpv.ui.makeStyles;
+var useStyles = Login_makeStyles(function (theme) { return ({
+    loginContainer: {
+        width: '100%',
+    },
+    loginTextInput: {
+        width: '100%',
+        marginBottom: 10,
+    },
+    loginBtn: {},
+    loginBtnText: {
+        textAlign: 'center',
+    },
+}); });
+/**
+ * Create a login component to save the API key
+ *
+ * @param {LoginProps} props properties passed to the login component
+ * @returns {JSX.Element} a login component
+ */
+var Login = function () {
+    var ui = cgpv.ui, mui = cgpv.mui, react = cgpv.react, api = cgpv.api;
+    var createRef = react.createRef, useContext = react.useContext;
+    var textFieldRef = createRef();
+    var state = useContext(StateContext);
+    var TextField = mui.TextField;
+    var Button = ui.elements.Button;
+    var mapId = state.mapId;
+    var classes = useStyles();
+    /**
+     * Login function
+     */
+    var login = function () {
+        // request the validate end point to check if token is valid
+        var res = API.validateToken(textFieldRef.current.value);
+        if (res.detail) {
+            api.event.emit(api.eventNames.EVENT_SNACKBAR_OPEN, mapId, {
+                message: {
+                    type: 'key',
+                    value: res.detail,
+                    params: [],
+                },
+            });
+        }
+        else {
+            state.auth.saveApiKey(textFieldRef.current.value);
+        }
+    };
+    return ((0,jsx_runtime.jsxs)("div", __assign({ className: classes.loginContainer }, { children: [(0,jsx_runtime.jsx)(TextField, { id: "outlined-basic", label: "API Key Token", variant: "outlined", inputRef: textFieldRef, className: classes.loginTextInput }), (0,jsx_runtime.jsx)(Button, __assign({ tooltip: "Login", tooltipPlacement: "right", className: classes.loginBtn, variant: "contained", type: "text", onClick: function () { return login(); } }, { children: (0,jsx_runtime.jsx)("div", __assign({ className: classes.loginBtnText }, { children: "Login" })) }))] })));
+};
+
+;// CONCATENATED MODULE: ./src/components/ClimateEngine.tsx
+var ClimateEngine_assign = (undefined && undefined.__assign) || function () {
+    ClimateEngine_assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return ClimateEngine_assign.apply(this, arguments);
+};
+var ClimateEngine_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -5157,7 +5368,7 @@ var Login_awaiter = (undefined && undefined.__awaiter) || function (thisArg, _ar
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var Login_generator = (undefined && undefined.__generator) || function (thisArg, body) {
+var ClimateEngine_generator = (undefined && undefined.__generator) || function (thisArg, body) {
     var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
     return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
     function verb(n) { return function (v) { return step([n, v]); }; }
@@ -5187,91 +5398,183 @@ var Login_generator = (undefined && undefined.__generator) || function (thisArg,
 
 
 
-
-// get reference to window object
-var w = window;
-// get reference to geoview apis
-var cgpv = w['cgpv'];
-var Login_makeStyles = cgpv.ui.makeStyles;
-var useStyles = Login_makeStyles(function (theme) { return ({
-    loginContainer: {
-        width: '100%',
-    },
-    loginTextInput: {
-        width: '100%',
+var ClimateEngine_w = window;
+var ClimateEngine_cgpv = ClimateEngine_w['cgpv'];
+var ClimateEngine_makeStyles = ClimateEngine_cgpv.ui.makeStyles;
+var ClimateEngine_useStyles = ClimateEngine_makeStyles(function (theme) { return ({
+    fieldSetContainer: {
+        marginTop: 10,
         marginBottom: 10,
     },
-    loginBtn: {},
-    loginBtnText: {
-        textAlign: 'center',
+    fieldSetField: {
+        display: 'flex',
+        flexDirection: 'column',
+        margin: 10,
     },
 }); });
-/**
- * Create a login component to save the API key
- *
- * @param {LoginProps} props properties passed to the login component
- * @returns {JSX.Element} a login component
- */
-var Login = function (props) {
-    var ui = cgpv.ui, mui = cgpv.mui, react = cgpv.react, api = cgpv.api;
-    var createRef = react.createRef, useContext = react.useContext;
-    var textFieldRef = createRef();
+var ClimateEngine = function () {
+    var ui = ClimateEngine_cgpv.ui, mui = ClimateEngine_cgpv.mui, react = ClimateEngine_cgpv.react, types = ClimateEngine_cgpv.types, api = ClimateEngine_cgpv.api, leaflet = ClimateEngine_cgpv.leaflet;
+    var tileLayer = leaflet.tileLayer;
+    var useState = react.useState, useEffect = react.useEffect, useContext = react.useContext, useCallback = react.useCallback;
+    var _a = useState(false), loaded = _a[0], setLoaded = _a[1];
+    var _b = useState(false), inProcess = _b[0], setInProcess = _b[1];
+    var _c = useState(''), minDate = _c[0], setMinDate = _c[1];
+    var _d = useState(''), maxDate = _d[0], setMaxDate = _d[1];
+    var _e = useState(''), startDate = _e[0], setStartDate = _e[1];
+    var _f = useState(''), endDate = _f[0], setEndDate = _f[1];
+    var _g = useState('LANDSAT8_SR'), dataset = _g[0], setDataset = _g[1];
+    var _h = useState('NDVI'), variable = _h[0], setVariable = _h[1];
     var state = useContext(StateContext);
-    var TextField = mui.TextField;
-    var Button = ui.elements.Button;
-    var mapId = state.mapId;
-    var classes = useStyles();
+    var auth = state.auth, mapId = state.mapId, buttonPanel = state.buttonPanel;
+    var apiKey = auth.apiKey, deleteApiKey = auth.deleteApiKey;
+    var _j = ui.elements, Button = _j.Button, CircularProgress = _j.CircularProgress;
+    var TextField = mui.TextField, Select = mui.Select, MenuItem = mui.MenuItem;
+    var classes = ClimateEngine_useStyles();
     /**
-     * Login function
+     * Load the map layer for the selected date range on selected dataset and variable
      */
-    var login = function () { return Login_awaiter(void 0, void 0, void 0, function () {
-        var res;
-        return Login_generator(this, function (_a) {
+    var loadMapLayer = function () { return ClimateEngine_awaiter(void 0, void 0, void 0, function () {
+        var result, basemapUrl;
+        return ClimateEngine_generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, httpGet(End_Points.VALIDATE_KEY, textFieldRef.current.value)];
+                case 0: return [4 /*yield*/, API.getMapLayer(dataset, variable, startDate, endDate, apiKey)];
                 case 1:
-                    res = _a.sent();
-                    if (res.detail) {
-                        api.event.emit(api.eventNames.EVENT_SNACKBAR_OPEN, mapId, {
-                            message: {
-                                type: 'key',
-                                value: res.detail,
-                                params: [],
-                            },
-                        });
-                    }
-                    else {
-                        props.saveApiKey(textFieldRef.current.value);
+                    result = (_a.sent());
+                    if (!result.details) {
+                        basemapUrl = result.tile_fetcher;
+                        // const basemap = {
+                        //   id: result['map_id'],
+                        //   name: 'Dataset from ' + startDate + ' to ' + endDate,
+                        //   type: 'transport',
+                        //   description: '',
+                        //   descSummary: '',
+                        //   altText: '',
+                        //   thumbnailUrl: '',
+                        //   layers: [
+                        //     {
+                        //       id: 'transport',
+                        //       type: 'transport',
+                        //       url: basemapUrl,
+                        //       opacity: result.colormap_options.opacity,
+                        //       basemapPaneName: 'transport',
+                        //       options: {
+                        //         tms: false,
+                        //         tileSize: 1,
+                        //         noWrap: false,
+                        //         attribution: false,
+                        //       },
+                        //     },
+                        //   ],
+                        //   attribution: '',
+                        //   zoomLevels: {
+                        //     min: result.colormap_options.min,
+                        //     max: result.colormap_options.max,
+                        //   },
+                        // };
+                        // api.map(mapId).basemap.createBasemap(basemap);
+                        // api.map(mapId).basemap.setBasemap(result['map_id']);
+                        tileLayer(basemapUrl).addTo(api.map(mapId).map);
+                        buttonPanel.panel.close();
+                        // api.map(mapId).modal.modals['processIndicator'].close();
                     }
                     return [2 /*return*/];
             }
         });
     }); };
-    return ((0,jsx_runtime.jsxs)("div", __assign({ className: classes.loginContainer }, { children: [(0,jsx_runtime.jsx)(TextField, { id: "outlined-basic", label: "API Key Token", variant: "outlined", inputRef: textFieldRef, className: classes.loginTextInput }), (0,jsx_runtime.jsx)(Button, __assign({ tooltip: "Login", tooltipPlacement: "right", className: classes.loginBtn, type: "text", onClick: function () { return login(); } }, { children: (0,jsx_runtime.jsx)("div", __assign({ className: classes.loginBtnText }, { children: "Login" })) }))] })));
-};
-
-;// CONCATENATED MODULE: ./src/components/ClimateEngine.tsx
-var ClimateEngine_assign = (undefined && undefined.__assign) || function () {
-    ClimateEngine_assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
+    /**
+     * Get the date range for selected dataset
+     */
+    var getDateRange = useCallback(function () { return ClimateEngine_awaiter(void 0, void 0, void 0, function () {
+        var dateRange;
+        return ClimateEngine_generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, API.getTimePeriodRange(dataset, apiKey)];
+                case 1:
+                    dateRange = (_a.sent());
+                    if (!dateRange.details) {
+                        setMinDate(dateRange.min);
+                        setMaxDate(dateRange.max);
+                        setStartDate(dateRange.max);
+                        setEndDate(dateRange.max);
+                    }
+                    if (startDate && endDate) {
+                        setLoaded(true);
+                        api.map(mapId).removeComponent('loadingIndicator');
+                        loadMapLayer();
+                    }
+                    return [2 /*return*/];
+            }
+        });
+    }); }, [startDate, endDate]);
+    /**
+     * Get time series for selected date range on selected dataset and variable
+     * then display a chart with the available points
+     *
+     * @param {number} lat latitude value
+     * @param {number} lng longtitude value
+     */
+    var getTimeSeries = function (lat, lng) { return ClimateEngine_awaiter(void 0, void 0, void 0, function () {
+        var result, values, i, value;
+        return ClimateEngine_generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, API.getTimeSeries(lat, lng, dataset, variable, startDate, endDate, apiKey)];
+                case 1:
+                    result = _a.sent();
+                    if (!Array.isArray(result)) {
+                        api.event.emit(api.eventNames.EVENT_SNACKBAR_OPEN, mapId, {
+                            message: {
+                                type: 'key',
+                                value: 'No points found',
+                                params: [],
+                            },
+                        });
+                    }
+                    else {
+                        values = [];
+                        for (i = 0; i < result[0].length; i++) {
+                            value = result[0][i].NDVI;
+                            if (value === -9999)
+                                value = 0;
+                            values.push([result[0][i].Date, value]);
+                        }
+                        console.log(values);
+                    }
+                    return [2 /*return*/];
+            }
+        });
+    }); };
+    useEffect(function () {
+        createProcessProgressModal();
+    }, []);
+    useEffect(function () {
+        getDateRange();
+        // add a loading indicator to map
+        api
+            .map(mapId)
+            .addComponent('loadingIndicator', (0,jsx_runtime.jsx)(CircularProgress, { isLoaded: loaded }));
+        // listen to map click events
+        var map = api.map(mapId).map;
+        map.on('click', function (e) {
+            var point = e.latlng;
+            getTimeSeries(point.lat, point.lng);
+        });
+        return function () {
+            map.off('click');
+        };
+    }, [getDateRange]);
+    /**
+     * Create a loading progress modal
+     */
+    var createProcessProgressModal = function () {
+        var modalId = 'processIndicator';
+        api.map(mapId).modal.createModal({
+            id: modalId,
+            content: (0,jsx_runtime.jsx)(CircularProgress, { isLoaded: inProcess }),
+        });
     };
-    return ClimateEngine_assign.apply(this, arguments);
-};
-
-var ClimateEngine_w = window;
-var ClimateEngine_cgpv = ClimateEngine_w['cgpv'];
-var ClimateEngine = function (props) {
-    var ui = ClimateEngine_cgpv.ui, mui = ClimateEngine_cgpv.mui, react = ClimateEngine_cgpv.react, types = ClimateEngine_cgpv.types;
-    var useState = react.useState, useEffect = react.useEffect;
-    var Button = ui.elements.Button;
-    return ((0,jsx_runtime.jsx)("div", { children: (0,jsx_runtime.jsx)(Button, ClimateEngine_assign({ tooltip: "Logout", tooltipPlacement: "right", type: "text", onClick: function () {
-                props.deleteApiKey();
-            } }, { children: "Logout" })) }));
+    return ((0,jsx_runtime.jsxs)("div", { children: [(0,jsx_runtime.jsx)(Button, ClimateEngine_assign({ tooltip: "Logout", tooltipPlacement: "right", type: "text", variant: "contained", onClick: function () {
+                    deleteApiKey();
+                } }, { children: "Logout" })), loaded && ((0,jsx_runtime.jsxs)("div", { children: [(0,jsx_runtime.jsxs)("fieldset", ClimateEngine_assign({ className: classes.fieldSetContainer }, { children: [(0,jsx_runtime.jsx)("legend", { children: "Variables" }), (0,jsx_runtime.jsxs)("div", { children: [(0,jsx_runtime.jsxs)("div", ClimateEngine_assign({ className: classes.fieldSetField }, { children: [(0,jsx_runtime.jsx)("label", ClimateEngine_assign({ htmlFor: "dataset" }, { children: "Dataset:" })), (0,jsx_runtime.jsx)(Select, ClimateEngine_assign({ id: "dataset", value: dataset, disabled: true }, { children: (0,jsx_runtime.jsx)(MenuItem, ClimateEngine_assign({ value: "LANDSAT8_SR" }, { children: "LANDSAT8_SR" })) }))] })), (0,jsx_runtime.jsxs)("div", ClimateEngine_assign({ className: classes.fieldSetField }, { children: [(0,jsx_runtime.jsx)("label", ClimateEngine_assign({ htmlFor: "variable" }, { children: "Variable:" })), (0,jsx_runtime.jsx)(Select, ClimateEngine_assign({ id: "variable", value: variable, disabled: true }, { children: (0,jsx_runtime.jsx)(MenuItem, ClimateEngine_assign({ value: "NDVI" }, { children: "NDVI" })) }))] }))] })] })), (0,jsx_runtime.jsxs)("fieldset", ClimateEngine_assign({ className: classes.fieldSetContainer }, { children: [(0,jsx_runtime.jsx)("legend", { children: "Time Period" }), (0,jsx_runtime.jsxs)("div", { children: [(0,jsx_runtime.jsxs)("div", ClimateEngine_assign({ className: classes.fieldSetField }, { children: [(0,jsx_runtime.jsx)("label", ClimateEngine_assign({ htmlFor: "startDate" }, { children: "Start Date:" })), (0,jsx_runtime.jsx)(TextField, { id: "startDate", type: "date", inputProps: { value: startDate, min: minDate, max: maxDate }, onChange: function (e) { return setStartDate(e.target.value); } })] })), (0,jsx_runtime.jsxs)("div", ClimateEngine_assign({ className: classes.fieldSetField }, { children: [(0,jsx_runtime.jsx)("label", ClimateEngine_assign({ htmlFor: "endDate" }, { children: "End Date:" })), (0,jsx_runtime.jsx)(TextField, { id: "endDate", type: "date", inputProps: { value: endDate, min: minDate, max: maxDate }, onChange: function (e) { return setEndDate(e.target.value); } })] }))] })] })), (0,jsx_runtime.jsx)(Button, ClimateEngine_assign({ tooltip: "Process Data", tooltipPlacement: "right", type: "text", variant: "contained", onClick: function () { return loadMapLayer(); } }, { children: "Process Data" }))] }))] }));
 };
 
 ;// CONCATENATED MODULE: ./src/components/PanelContent.tsx
@@ -5306,9 +5609,6 @@ var PanelContent = function (props) {
     var ui = PanelContent_cgpv.ui, mui = PanelContent_cgpv.mui, react = PanelContent_cgpv.react;
     var useState = react.useState, useEffect = react.useEffect, useMemo = react.useMemo;
     var _a = useState(), apiKey = _a[0], setApiKey = _a[1];
-    var auth = useMemo(function () {
-        return { apiKey: apiKey, setApiKey: setApiKey };
-    }, [apiKey]);
     /**
      * Save API key in local storage and login user
      *
@@ -5316,7 +5616,6 @@ var PanelContent = function (props) {
      */
     var saveApiKey = function (key) {
         localStorage.setItem('key', key);
-        console.log('test');
         auth.setApiKey(key);
     };
     /**
@@ -5338,10 +5637,17 @@ var PanelContent = function (props) {
     useEffect(function () {
         getApiKey();
     }, []);
+    /**
+     * Create auth state
+     */
+    var auth = useMemo(function () {
+        return { apiKey: apiKey, setApiKey: setApiKey, saveApiKey: saveApiKey, deleteApiKey: deleteApiKey, getApiKey: getApiKey };
+    }, [apiKey]);
     return ((0,jsx_runtime.jsx)(StateContext.Provider, PanelContent_assign({ value: {
             auth: auth,
             mapId: mapId,
-        } }, { children: !auth.apiKey ? ((0,jsx_runtime.jsx)(Login, { saveApiKey: saveApiKey })) : ((0,jsx_runtime.jsx)(ClimateEngine, { deleteApiKey: deleteApiKey, mapId: mapId, buttonPanel: buttonPanel })) })));
+            buttonPanel: buttonPanel,
+        } }, { children: !auth.apiKey ? (0,jsx_runtime.jsx)(Login, {}) : (0,jsx_runtime.jsx)(ClimateEngine, {}) })));
 };
 
 ;// CONCATENATED MODULE: ./public/locales/en-CA/translation.json
@@ -5421,7 +5727,7 @@ var App = function () {
     return ((0,jsx_runtime.jsx)("div", { id: "mapWM", className: "llwp-map ".concat(classes.container), style: {
             height: '100vh',
             zIndex: 0,
-        }, "data-leaflet": "{ 'name': 'Web Mercator', 'projection': 3857, 'zoom': 4, 'center': [60,-100], 'language': 'en-CA', 'basemapOptions': { 'id': 'transport', 'shaded': false, 'labeled': true }, 'layers': [] } " }));
+        }, "data-leaflet": "{ 'name': 'Web Mercator', 'projection': 3857, 'zoom': 4, 'center': [60,-96], 'language': 'en-CA', 'basemapOptions': { 'id': 'transport', 'shaded': false, 'labeled': true }, 'layers': [] } " }));
 };
 /* harmony default export */ const components_App = (App);
 
