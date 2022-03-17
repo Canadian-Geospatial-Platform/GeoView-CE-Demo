@@ -18631,8 +18631,15 @@ var ClimateEngine = function () {
                     if (!result.details) {
                         basemapUrl = result.tile_fetcher;
                         tileLayer(basemapUrl).addTo(api.map(mapId).map);
-                        buttonPanel.panel.close();
+                        // buttonPanel.panel.close();
                         // api.map(mapId).modal.modals['processIndicator'].close();
+                        api.event.emit(api.eventNames.EVENT_SNACKBAR_OPEN, mapId, {
+                            message: {
+                                type: 'key',
+                                value: 'Processing Finished',
+                                params: [],
+                            },
+                        });
                     }
                     return [2 /*return*/];
             }
@@ -18720,6 +18727,22 @@ var ClimateEngine = function () {
             }
         });
     }); };
+    /**
+     * Search if marker already exists on map
+     *
+     * @param {number} lat the latitude point
+     * @param {number} lng the longtitude point
+     */
+    var searchMarkers = function (lat, lng) {
+        var markers = api.map(mapId).layer.vector.geometries;
+        for (var i = 0; i < markers.length; i++) {
+            var markerPoint = markers[i]._latlng;
+            if (markerPoint.lat === lat && markerPoint.lng === lng) {
+                return true;
+            }
+        }
+        return false;
+    };
     useEffect(function () {
         if (startDate.length && endDate.length && !loaded) {
             setLoaded(true);
@@ -18729,7 +18752,11 @@ var ClimateEngine = function () {
         // listen to map click events
         map.on('click', function (e) {
             var point = e.latlng;
+            // get time series at the click location and open a chart
             getTimeSeries(point.lat, point.lng);
+            var exists = searchMarkers(point.lat, point.lng);
+            if (!exists)
+                api.map(mapId).layer.vector.addMarker(point.lat, point.lng, {});
         });
         return function () {
             map.off('click');
@@ -18772,7 +18799,7 @@ var ClimateEngine = function () {
         var panel = {
             title: 'chart',
             icon: '<i class="material-icons">map</i>',
-            width: 300,
+            width: 500,
         };
         // create a new button panel on the appbar
         ClimateEngine_cgpv.api
