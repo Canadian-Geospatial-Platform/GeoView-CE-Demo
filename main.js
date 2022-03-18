@@ -18673,7 +18673,7 @@ var ClimateEngine = function () {
      * @param {number} lng longtitude value
      */
     var getTimeSeries = function (lat, lng) { return ClimateEngine_awaiter(void 0, void 0, void 0, function () {
-        var result, labels, data, i, value, chartData, config, chartButtonPanel, chartElement, chart;
+        var result, labels, data, i, value, chartData, config, chartElement, chart;
         return ClimateEngine_generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, API.getTimeSeries(lat, lng, dataset, variable, startDate, endDate, apiKey)];
@@ -18714,14 +18714,26 @@ var ClimateEngine = function () {
                             data: chartData,
                             options: {},
                         };
-                        chartButtonPanel = api.map(mapId).navBarButtons.buttons['charts']['chartModal'];
+                        api.map(mapId).modal.modals['chartContainer'].open();
                         chartElement = document.getElementById('chartContainer');
                         if (chartElement) {
                             chartElement.outerHTML = '<canvas id="chartContainer"></canvas>';
                         }
-                        chartButtonPanel.panel.changeContent((0,jsx_runtime.jsx)("canvas", { id: "chartContainer" }));
                         chart = new auto_esm(document.getElementById('chartContainer'), config);
-                        chartButtonPanel.panel.open();
+                        // const chartButtonPanel =
+                        //   api.map(mapId).navBarButtons.buttons['charts']['chartModal'];
+                        // const chartElement = document.getElementById('chartContainer');
+                        // if (chartElement) {
+                        //   chartElement.outerHTML = '<canvas id="chartContainer"></canvas>';
+                        // }
+                        // chartButtonPanel.panel.changeContent(
+                        //   <canvas id="chartContainer"></canvas>,
+                        // );
+                        // const chart = new Chart(
+                        //   document.getElementById('chartContainer') as HTMLCanvasElement,
+                        //   config as any,
+                        // );
+                        // chartButtonPanel.panel.open();
                     }
                     return [2 /*return*/];
             }
@@ -18805,6 +18817,14 @@ var ClimateEngine = function () {
         ClimateEngine_cgpv.api
             .map('mapWM')
             .navBarButtons.createNavbarButtonPanel(button, panel, 'charts');
+        ClimateEngine_cgpv.api.map('mapWM').modal.createModal({
+            id: 'chartContainer',
+            content: (0,jsx_runtime.jsx)("canvas", { id: "chartContainer" }),
+            width: 750,
+            header: {
+                title: dataset,
+            },
+        });
     };
     return ((0,jsx_runtime.jsxs)("div", { children: [(0,jsx_runtime.jsx)(Button, ClimateEngine_assign({ tooltip: "Logout", tooltipPlacement: "right", type: "text", variant: "contained", onClick: function () {
                     deleteApiKey();
