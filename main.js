@@ -5040,6 +5040,10 @@ var End_Points;
      * Get min and max time period
      */
     End_Points["DATASET_DATES"] = "/metadata/dataset_dates";
+    /**
+     * Get dataset variables
+     */
+    End_Points["DATASET_VARIABLES"] = "/metadata/dataset_variables";
 })(End_Points || (End_Points = {}));
 
 ;// CONCATENATED MODULE: ./src/utils/network.ts
@@ -5225,6 +5229,25 @@ var API = /** @class */ (function () {
         return api_generator(_a, function (_b) {
             switch (_b.label) {
                 case 0: return [4 /*yield*/, httpGet("".concat(End_Points.DATASET_DATES, "?dataset=").concat(dataset), apiKey)];
+                case 1:
+                    result = _b.sent();
+                    return [2 /*return*/, result];
+            }
+        });
+    }); };
+    /**
+     * Get the available dataset variables
+     *
+     * @param {string} dataset the dataset to look for
+     * @param {string} apiKey Authentication token
+     *
+     * @returns {Object} An object containing the dataset variables
+     */
+    API.getDatasetVariables = function (dataset, apiKey) { return api_awaiter(void 0, void 0, void 0, function () {
+        var result;
+        return api_generator(_a, function (_b) {
+            switch (_b.label) {
+                case 0: return [4 /*yield*/, httpGet("".concat(End_Points.DATASET_VARIABLES, "?dataset=").concat(dataset), apiKey)];
                 case 1:
                     result = _b.sent();
                     return [2 /*return*/, result];
@@ -18605,24 +18628,26 @@ var ClimateEngine = function () {
     var useState = react.useState, useEffect = react.useEffect, useContext = react.useContext, useCallback = react.useCallback;
     var _a = useState(false), loaded = _a[0], setLoaded = _a[1];
     var _b = useState(false), inProcess = _b[0], setInProcess = _b[1];
-    var _c = useState(''), minDate = _c[0], setMinDate = _c[1];
-    var _d = useState(''), maxDate = _d[0], setMaxDate = _d[1];
-    var _e = useState(''), startDate = _e[0], setStartDate = _e[1];
-    var _f = useState(''), endDate = _f[0], setEndDate = _f[1];
-    var _g = useState('LANDSAT8_SR'), dataset = _g[0], setDataset = _g[1];
-    var _h = useState('NDVI'), variable = _h[0], setVariable = _h[1];
+    var _c = useState(), loadedLayer = _c[0], setLoadedLayer = _c[1];
+    var _d = useState(''), minDate = _d[0], setMinDate = _d[1];
+    var _e = useState(''), maxDate = _e[0], setMaxDate = _e[1];
+    var _f = useState(''), startDate = _f[0], setStartDate = _f[1];
+    var _g = useState(''), endDate = _g[0], setEndDate = _g[1];
+    var _h = useState('LANDSAT8_SR'), dataset = _h[0], setDataset = _h[1];
+    var _j = useState('NDVI'), variable = _j[0], setVariable = _j[1];
+    var _k = useState([]), variables = _k[0], setVariables = _k[1];
     var state = useContext(StateContext);
     var auth = state.auth, mapId = state.mapId, buttonPanel = state.buttonPanel;
     var apiKey = auth.apiKey, deleteApiKey = auth.deleteApiKey;
-    var _j = ui.elements, Button = _j.Button, CircularProgress = _j.CircularProgress;
-    var TextField = mui.TextField, Select = mui.Select, MenuItem = mui.MenuItem;
+    var _l = ui.elements, Button = _l.Button, CircularProgress = _l.CircularProgress;
+    var TextField = mui.TextField, Select = mui.Select, MenuItem = mui.MenuItem, ListSubheader = mui.ListSubheader;
     var classes = ClimateEngine_useStyles();
     var map = api.map(mapId).map;
     /**
      * Load the map layer for the selected date range on selected dataset and variable
      */
     var loadMapLayer = function () { return ClimateEngine_awaiter(void 0, void 0, void 0, function () {
-        var result, basemapUrl;
+        var result, basemapUrl, layer;
         return ClimateEngine_generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, API.getMapLayer(dataset, variable, startDate, endDate, apiKey)];
@@ -18630,9 +18655,13 @@ var ClimateEngine = function () {
                     result = (_a.sent());
                     if (!result.details) {
                         basemapUrl = result.tile_fetcher;
-                        tileLayer(basemapUrl).addTo(api.map(mapId).map);
-                        // buttonPanel.panel.close();
-                        // api.map(mapId).modal.modals['processIndicator'].close();
+                        // remove previous layer if exists
+                        if (loadedLayer)
+                            map.removeLayer(loadedLayer);
+                        layer = tileLayer(basemapUrl);
+                        layer.addTo(api.map(mapId).map);
+                        setLoadedLayer(layer);
+                        // once done, notify user
                         api.event.emit(api.eventNames.EVENT_SNACKBAR_OPEN, mapId, {
                             message: {
                                 type: 'key',
@@ -18692,7 +18721,7 @@ var ClimateEngine = function () {
                         labels = [];
                         data = [];
                         for (i = 0; i < result[0].length; i++) {
-                            value = result[0][i].NDVI;
+                            value = result[0][i][variable];
                             if (value === -9999)
                                 value = 0;
                             labels.push(result[0][i].Date);
@@ -18720,20 +18749,6 @@ var ClimateEngine = function () {
                             chartElement.outerHTML = '<canvas id="chartContainer"></canvas>';
                         }
                         chart = new auto_esm(document.getElementById('chartContainer'), config);
-                        // const chartButtonPanel =
-                        //   api.map(mapId).navBarButtons.buttons['charts']['chartModal'];
-                        // const chartElement = document.getElementById('chartContainer');
-                        // if (chartElement) {
-                        //   chartElement.outerHTML = '<canvas id="chartContainer"></canvas>';
-                        // }
-                        // chartButtonPanel.panel.changeContent(
-                        //   <canvas id="chartContainer"></canvas>,
-                        // );
-                        // const chart = new Chart(
-                        //   document.getElementById('chartContainer') as HTMLCanvasElement,
-                        //   config as any,
-                        // );
-                        // chartButtonPanel.panel.open();
                     }
                     return [2 /*return*/];
             }
@@ -18755,6 +18770,33 @@ var ClimateEngine = function () {
         }
         return false;
     };
+    /**
+     * Get the variables for the dataset
+     *
+     * @param {string} dataset the selected dataset
+     */
+    var getVariableByDataset = function (dataset) { return ClimateEngine_awaiter(void 0, void 0, void 0, function () {
+        var res;
+        return ClimateEngine_generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, API.getDatasetVariables(dataset, apiKey)];
+                case 1:
+                    res = (_a.sent());
+                    if (res.variables && res.variables.length > 0) {
+                        ClimateEngine_cgpv.api.map('mapWM').modal.modals['chartContainer'].update({
+                            header: {
+                                title: dataset,
+                            },
+                        });
+                        setDataset(dataset);
+                        setVariables(res.variables);
+                        setVariable(res.variables[0]);
+                        getDateRange();
+                    }
+                    return [2 /*return*/];
+            }
+        });
+    }); };
     useEffect(function () {
         if (startDate.length && endDate.length && !loaded) {
             setLoaded(true);
@@ -18766,9 +18808,10 @@ var ClimateEngine = function () {
             var point = e.latlng;
             // get time series at the click location and open a chart
             getTimeSeries(point.lat, point.lng);
-            var exists = searchMarkers(point.lat, point.lng);
-            if (!exists)
-                api.map(mapId).layer.vector.addMarker(point.lat, point.lng, {});
+            api.map(mapId).layer.vector.deleteGeometry('clickPosition');
+            api
+                .map(mapId)
+                .layer.vector.addMarker(point.lat, point.lng, {}, 'clickPosition');
         });
         return function () {
             map.off('click');
@@ -18777,7 +18820,7 @@ var ClimateEngine = function () {
     useEffect(function () {
         createProcessProgressModal();
         createChartModal();
-        getDateRange();
+        getVariableByDataset(dataset);
         // add a loading indicator to map
         api
             .map(mapId)
@@ -18828,7 +18871,9 @@ var ClimateEngine = function () {
     };
     return ((0,jsx_runtime.jsxs)("div", { children: [(0,jsx_runtime.jsx)(Button, ClimateEngine_assign({ tooltip: "Logout", tooltipPlacement: "right", type: "text", variant: "contained", onClick: function () {
                     deleteApiKey();
-                } }, { children: "Logout" })), loaded && ((0,jsx_runtime.jsxs)("div", { children: [(0,jsx_runtime.jsxs)("fieldset", ClimateEngine_assign({ className: classes.fieldSetContainer }, { children: [(0,jsx_runtime.jsx)("legend", { children: "Variables" }), (0,jsx_runtime.jsxs)("div", { children: [(0,jsx_runtime.jsxs)("div", ClimateEngine_assign({ className: classes.fieldSetField }, { children: [(0,jsx_runtime.jsx)("label", ClimateEngine_assign({ htmlFor: "dataset" }, { children: "Dataset:" })), (0,jsx_runtime.jsx)(Select, ClimateEngine_assign({ id: "dataset", value: dataset, disabled: true }, { children: (0,jsx_runtime.jsx)(MenuItem, ClimateEngine_assign({ value: "LANDSAT8_SR" }, { children: "LANDSAT8_SR" })) }))] })), (0,jsx_runtime.jsxs)("div", ClimateEngine_assign({ className: classes.fieldSetField }, { children: [(0,jsx_runtime.jsx)("label", ClimateEngine_assign({ htmlFor: "variable" }, { children: "Variable:" })), (0,jsx_runtime.jsx)(Select, ClimateEngine_assign({ id: "variable", value: variable, disabled: true }, { children: (0,jsx_runtime.jsx)(MenuItem, ClimateEngine_assign({ value: "NDVI" }, { children: "NDVI" })) }))] }))] })] })), (0,jsx_runtime.jsxs)("fieldset", ClimateEngine_assign({ className: classes.fieldSetContainer }, { children: [(0,jsx_runtime.jsx)("legend", { children: "Time Period" }), (0,jsx_runtime.jsxs)("div", { children: [(0,jsx_runtime.jsxs)("div", ClimateEngine_assign({ className: classes.fieldSetField }, { children: [(0,jsx_runtime.jsx)("label", ClimateEngine_assign({ htmlFor: "startDate" }, { children: "Start Date:" })), (0,jsx_runtime.jsx)(TextField, { id: "startDate", type: "date", value: startDate, inputProps: { min: minDate, max: maxDate }, onChange: function (e) { return setStartDate(e.target.value); } })] })), (0,jsx_runtime.jsxs)("div", ClimateEngine_assign({ className: classes.fieldSetField }, { children: [(0,jsx_runtime.jsx)("label", ClimateEngine_assign({ htmlFor: "endDate" }, { children: "End Date:" })), (0,jsx_runtime.jsx)(TextField, { id: "endDate", type: "date", value: endDate, inputProps: { min: minDate, max: maxDate }, onChange: function (e) { return setEndDate(e.target.value); } })] }))] })] })), (0,jsx_runtime.jsx)(Button, ClimateEngine_assign({ tooltip: "Process Data", tooltipPlacement: "right", type: "text", variant: "contained", onClick: function () { return loadMapLayer(); } }, { children: "Process Data" }))] }))] }));
+                } }, { children: "Logout" })), loaded && ((0,jsx_runtime.jsxs)("div", { children: [(0,jsx_runtime.jsxs)("fieldset", ClimateEngine_assign({ className: classes.fieldSetContainer }, { children: [(0,jsx_runtime.jsx)("legend", { children: "Variables" }), (0,jsx_runtime.jsxs)("div", { children: [(0,jsx_runtime.jsxs)("div", ClimateEngine_assign({ className: classes.fieldSetField }, { children: [(0,jsx_runtime.jsx)("label", ClimateEngine_assign({ htmlFor: "dataset" }, { children: "Dataset:" })), (0,jsx_runtime.jsxs)(Select, ClimateEngine_assign({ id: "dataset", value: dataset, onChange: function (e) { return getVariableByDataset(e.target.value); } }, { children: [(0,jsx_runtime.jsx)(ListSubheader, { children: "Landsat At-Surface Reflectance" }), (0,jsx_runtime.jsx)(MenuItem, ClimateEngine_assign({ value: "LANDSAT7_SR" }, { children: "Landsat 7 Surface Reflectance" })), (0,jsx_runtime.jsx)(MenuItem, ClimateEngine_assign({ value: "LANDSAT8_SR" }, { children: "Landsat 8 Surface Reflectance" })), (0,jsx_runtime.jsx)(ListSubheader, { children: "Landsat Top-Of-Atmosphere Reflectance" }), (0,jsx_runtime.jsx)(MenuItem, ClimateEngine_assign({ value: "LANDSAT7_TOA" }, { children: "Landsat 7 TOA Reflectance" })), (0,jsx_runtime.jsx)(MenuItem, ClimateEngine_assign({ value: "LANDSAT8_TOA" }, { children: "Landsat 8 TOA Reflectance" }))] }))] })), (0,jsx_runtime.jsxs)("div", ClimateEngine_assign({ className: classes.fieldSetField }, { children: [(0,jsx_runtime.jsx)("label", ClimateEngine_assign({ htmlFor: "variable" }, { children: "Variable:" })), (0,jsx_runtime.jsx)(Select, ClimateEngine_assign({ id: "variable", value: variable, onChange: function (e) { return setVariable(e.target.value); } }, { children: variables.map(function (item) {
+                                                    return ((0,jsx_runtime.jsx)(MenuItem, ClimateEngine_assign({ value: item }, { children: item }), item));
+                                                }) }))] }))] })] })), (0,jsx_runtime.jsxs)("fieldset", ClimateEngine_assign({ className: classes.fieldSetContainer }, { children: [(0,jsx_runtime.jsx)("legend", { children: "Time Period" }), (0,jsx_runtime.jsxs)("div", { children: [(0,jsx_runtime.jsxs)("div", { children: ["Range: ", minDate, " to ", maxDate] }), (0,jsx_runtime.jsxs)("div", ClimateEngine_assign({ className: classes.fieldSetField }, { children: [(0,jsx_runtime.jsx)("label", ClimateEngine_assign({ htmlFor: "startDate" }, { children: "Start Date:" })), (0,jsx_runtime.jsx)(TextField, { id: "startDate", type: "date", value: startDate, inputProps: { min: minDate, max: maxDate }, onChange: function (e) { return setStartDate(e.target.value); } })] })), (0,jsx_runtime.jsxs)("div", ClimateEngine_assign({ className: classes.fieldSetField }, { children: [(0,jsx_runtime.jsx)("label", ClimateEngine_assign({ htmlFor: "endDate" }, { children: "End Date:" })), (0,jsx_runtime.jsx)(TextField, { id: "endDate", type: "date", value: endDate, inputProps: { min: minDate, max: maxDate }, onChange: function (e) { return setEndDate(e.target.value); } })] }))] })] })), (0,jsx_runtime.jsx)(Button, ClimateEngine_assign({ tooltip: "Process Data", tooltipPlacement: "right", type: "text", variant: "contained", onClick: function () { return loadMapLayer(); } }, { children: "Process Data" }))] }))] }));
 };
 
 ;// CONCATENATED MODULE: ./src/components/PanelContent.tsx
