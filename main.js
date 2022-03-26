@@ -18816,7 +18816,7 @@ var ClimateEngine = function () {
         return function () {
             map.off('click');
         };
-    }, [startDate, endDate, loaded]);
+    }, [startDate, endDate, loaded, variable]);
     useEffect(function () {
         createProcessProgressModal();
         createChartModal();
