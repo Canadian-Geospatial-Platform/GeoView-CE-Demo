@@ -5397,7 +5397,9 @@ var Login = function () {
                 case 1:
                     res = (_a.sent());
                     if (res.detail) {
-                        api.event.emit(api.eventNames.EVENT_SNACKBAR_OPEN, mapId, {
+                        api.event.emit({
+                            event: api.eventNames.SNACKBAR.EVENT_SNACKBAR_OPEN,
+                            handlerName: mapId,
                             message: {
                                 type: 'key',
                                 value: res.detail,
@@ -18662,7 +18664,9 @@ var ClimateEngine = function () {
                         layer.addTo(api.map(mapId).map);
                         setLoadedLayer(layer);
                         // once done, notify user
-                        api.event.emit(api.eventNames.EVENT_SNACKBAR_OPEN, mapId, {
+                        api.event.emit({
+                            event: api.eventNames.SNACKBAR.EVENT_SNACKBAR_OPEN,
+                            handlerName: mapId,
                             message: {
                                 type: 'key',
                                 value: 'Processing Finished',
@@ -18709,7 +18713,9 @@ var ClimateEngine = function () {
                 case 1:
                     result = _a.sent();
                     if (!Array.isArray(result)) {
-                        api.event.emit(api.eventNames.EVENT_SNACKBAR_OPEN, mapId, {
+                        api.event.emit({
+                            event: api.eventNames.SNACKBAR.EVENT_SNACKBAR_OPEN,
+                            handlerName: mapId,
                             message: {
                                 type: 'key',
                                 value: 'No points found',
@@ -18743,7 +18749,7 @@ var ClimateEngine = function () {
                             data: chartData,
                             options: {},
                         };
-                        api.map(mapId).modal.modals['chartContainer'].open();
+                        api.map(mapId).modal.modals['chartContainerModal'].open();
                         chartElement = document.getElementById('chartContainer');
                         if (chartElement) {
                             chartElement.outerHTML = '<canvas id="chartContainer"></canvas>';
@@ -18783,7 +18789,7 @@ var ClimateEngine = function () {
                 case 1:
                     res = (_a.sent());
                     if (res.variables && res.variables.length > 0) {
-                        ClimateEngine_cgpv.api.map('mapWM').modal.modals['chartContainer'].update({
+                        ClimateEngine_cgpv.api.map('mapWM').modal.modals['chartContainerModal'].update({
                             header: {
                                 title: dataset,
                             },
@@ -18861,7 +18867,7 @@ var ClimateEngine = function () {
             .map('mapWM')
             .navBarButtons.createNavbarButtonPanel(button, panel, 'charts');
         ClimateEngine_cgpv.api.map('mapWM').modal.createModal({
-            id: 'chartContainer',
+            id: 'chartContainerModal',
             content: (0,jsx_runtime.jsx)("canvas", { id: "chartContainer" }),
             width: 750,
             header: {
@@ -18876,9 +18882,9 @@ var ClimateEngine = function () {
                                                 }) }))] }))] })] })), (0,jsx_runtime.jsxs)("fieldset", ClimateEngine_assign({ className: classes.fieldSetContainer }, { children: [(0,jsx_runtime.jsx)("legend", { children: "Time Period" }), (0,jsx_runtime.jsxs)("div", { children: [(0,jsx_runtime.jsxs)("div", { children: ["Range: ", minDate, " to ", maxDate] }), (0,jsx_runtime.jsxs)("div", ClimateEngine_assign({ className: classes.fieldSetField }, { children: [(0,jsx_runtime.jsx)("label", ClimateEngine_assign({ htmlFor: "startDate" }, { children: "Start Date:" })), (0,jsx_runtime.jsx)(TextField, { id: "startDate", type: "date", value: startDate, inputProps: { min: minDate, max: maxDate }, onChange: function (e) { return setStartDate(e.target.value); } })] })), (0,jsx_runtime.jsxs)("div", ClimateEngine_assign({ className: classes.fieldSetField }, { children: [(0,jsx_runtime.jsx)("label", ClimateEngine_assign({ htmlFor: "endDate" }, { children: "End Date:" })), (0,jsx_runtime.jsx)(TextField, { id: "endDate", type: "date", value: endDate, inputProps: { min: minDate, max: maxDate }, onChange: function (e) { return setEndDate(e.target.value); } })] }))] })] })), (0,jsx_runtime.jsx)(Button, ClimateEngine_assign({ tooltip: "Process Data", tooltipPlacement: "right", type: "text", variant: "contained", onClick: function () { return loadMapLayer(); } }, { children: "Process Data" }))] }))] }));
 };
 
-;// CONCATENATED MODULE: ./src/components/PanelContent.tsx
-var PanelContent_assign = (undefined && undefined.__assign) || function () {
-    PanelContent_assign = Object.assign || function(t) {
+;// CONCATENATED MODULE: ./src/components/CEPanelContent.tsx
+var CEPanelContent_assign = (undefined && undefined.__assign) || function () {
+    CEPanelContent_assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -18886,26 +18892,26 @@ var PanelContent_assign = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return PanelContent_assign.apply(this, arguments);
+    return CEPanelContent_assign.apply(this, arguments);
 };
 
 
 
-var PanelContent_w = window;
-var PanelContent_cgpv = PanelContent_w['cgpv'];
-var PanelContent_react = PanelContent_cgpv.react;
-var PanelContent_createContext = PanelContent_react.createContext;
+var CEPanelContent_w = window;
+var CEPanelContent_cgpv = CEPanelContent_w['cgpv'];
+var CEPanelContent_react = CEPanelContent_cgpv.react;
+var CEPanelContent_createContext = CEPanelContent_react.createContext;
 // context used to store and manage state
-var StateContext = PanelContent_createContext({});
+var StateContext = CEPanelContent_createContext({});
 /**
  * Create a new panel content
  *
- * @param {PanelContentProps} props panel content properties
+ * @param {CEPanelContentProps} props panel content properties
  * @returns {JSX.Element} the new create panel content
  */
-var PanelContent = function (props) {
+var CEPanelContent = function (props) {
     var buttonPanel = props.buttonPanel, mapId = props.mapId;
-    var ui = PanelContent_cgpv.ui, mui = PanelContent_cgpv.mui, react = PanelContent_cgpv.react;
+    var ui = CEPanelContent_cgpv.ui, mui = CEPanelContent_cgpv.mui, react = CEPanelContent_cgpv.react;
     var useState = react.useState, useEffect = react.useEffect, useMemo = react.useMemo;
     var _a = useState(), apiKey = _a[0], setApiKey = _a[1];
     /**
@@ -18942,7 +18948,7 @@ var PanelContent = function (props) {
     var auth = useMemo(function () {
         return { apiKey: apiKey, setApiKey: setApiKey, saveApiKey: saveApiKey, deleteApiKey: deleteApiKey, getApiKey: getApiKey };
     }, [apiKey]);
-    return ((0,jsx_runtime.jsx)(StateContext.Provider, PanelContent_assign({ value: {
+    return ((0,jsx_runtime.jsx)(StateContext.Provider, CEPanelContent_assign({ value: {
             auth: auth,
             mapId: mapId,
             buttonPanel: buttonPanel,
@@ -18950,9 +18956,9 @@ var PanelContent = function (props) {
 };
 
 ;// CONCATENATED MODULE: ./public/locales/en-CA/translation.json
-const translation_namespaceObject = JSON.parse('{"custom":{"panelTitle":"Climate Engine"}}');
+const translation_namespaceObject = JSON.parse('{"custom":{"cePanelTitle":"Climate Engine","geePanelTitle":"Google Earth Engine"}}');
 ;// CONCATENATED MODULE: ./public/locales/fr-CA/translation.json
-const fr_CA_translation_namespaceObject = JSON.parse('{"custom":{"panelTitle":"Climate Engine"}}');
+const fr_CA_translation_namespaceObject = JSON.parse('{"custom":{"cePanelTitle":"Climate Engine","geePanelTitle":"Google Earth Engine"}}');
 ;// CONCATENATED MODULE: ./src/components/App.tsx
 
 
@@ -19000,33 +19006,58 @@ var App = function () {
             // get language
             var language = mapInstance.language;
             // button props
-            var button = {
-                // set ID to testPanelButton so that it can be accessed from the core viewer
-                id: 'testPanelButton',
-                tooltip: translations[language].custom.panelTitle,
+            var ceButton = {
+                // set ID to ceButtonPanel so that it can be accessed from the core viewer
+                id: 'ceButtonPanel',
+                tooltip: translations[language].custom.cePanelTitle,
                 tooltipPlacement: 'right',
                 icon: '<i class="material-icons">map</i>',
                 visible: true,
                 type: 'icon',
             };
             // panel props
-            var panel = {
-                title: translations[language].custom.panelTitle,
+            var cePanel = {
+                title: translations[language].custom.cePanelTitle,
                 icon: '<i class="material-icons">map</i>',
                 width: 300,
             };
             // create a new button panel on the appbar
-            var buttonPanel = App_cgpv.api
+            var ceButtonPanel = App_cgpv.api
                 .map('mapWM')
-                .appBarButtons.createAppbarPanel(button, panel, null);
+                .appBarButtons.createAppbarPanel(ceButton, cePanel, null);
             // set panel content
-            (_a = buttonPanel === null || buttonPanel === void 0 ? void 0 : buttonPanel.panel) === null || _a === void 0 ? void 0 : _a.changeContent((0,jsx_runtime.jsx)(PanelContent, { buttonPanel: buttonPanel, mapId: 'mapWM' }));
+            (_a = ceButtonPanel === null || ceButtonPanel === void 0 ? void 0 : ceButtonPanel.panel) === null || _a === void 0 ? void 0 : _a.changeContent((0,jsx_runtime.jsx)(CEPanelContent, { buttonPanel: ceButtonPanel, mapId: 'mapWM' }));
+            // // create Google Earth Engine Panel
+            // // button props
+            // const geeButton = {
+            //   // set ID to geeButtonPanel so that it can be accessed from the core viewer
+            //   id: 'geeButtonPanel',
+            //   tooltip: translations[language].custom.geePanelTitle,
+            //   tooltipPlacement: 'right',
+            //   icon: '<i class="material-icons">public</i>',
+            //   visible: true,
+            //   type: 'icon',
+            // };
+            // // panel props
+            // const geePanel = {
+            //   title: translations[language].custom.geePanelTitle,
+            //   icon: '<i class="material-icons">public</i>',
+            //   width: 300,
+            // };
+            // // create a new button panel on the appbar
+            // const geeButtonPanel = cgpv.api
+            //   .map('mapWM')
+            //   .appBarButtons.createAppbarPanel(geeButton, geePanel, null);
+            // // set panel content
+            // geeButtonPanel?.panel?.changeContent(
+            //   <GEEPanelContent buttonPanel={geeButtonPanel} mapId={'mapWM'} />,
+            // );
         });
     }, []);
     return ((0,jsx_runtime.jsx)("div", { id: "mapWM", className: "llwp-map ".concat(classes.container), style: {
             height: '100vh',
             zIndex: 0,
-        }, "data-leaflet": "{ 'name': 'Web Mercator', 'projection': 3857, 'zoom': 4, 'center': [60,-96], 'language': 'en-CA', 'basemapOptions': { 'id': 'transport', 'shaded': false, 'labeled': true }, 'layers': [] } " }));
+        }, "data-lang": "en-CA", "data-config": "{\n        'map': {\n          'interaction': 'dynamic',\n          'initialView': {\n            'zoom': 4,\n            'center': [60, -100]\n          },\n          'projection': 3857,\n          'basemapOptions': {\n            'id': 'transport',\n            'shaded': false,\n            'labeled': true\n          },\n          'layers': []\n        },\n        'theme': 'dark',\n        'languages': ['en-CA']\n        }" }));
 };
 /* harmony default export */ const components_App = (App);
 
