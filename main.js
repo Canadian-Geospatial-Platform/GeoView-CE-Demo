@@ -5378,12 +5378,11 @@ var useStyles = Login_makeStyles(function (theme) { return ({
  * @returns {JSX.Element} a login component
  */
 var Login = function () {
-    var ui = cgpv.ui, mui = cgpv.mui, react = cgpv.react, api = cgpv.api;
+    var ui = cgpv.ui, react = cgpv.react, api = cgpv.api;
     var createRef = react.createRef, useContext = react.useContext;
     var textFieldRef = createRef();
     var state = useContext(StateContext);
-    var TextField = mui.TextField;
-    var Button = ui.elements.Button;
+    var _a = ui.elements, TextField = _a.TextField, Button = _a.Button;
     var mapId = state.mapId;
     var classes = useStyles();
     /**
@@ -18625,7 +18624,7 @@ var ClimateEngine_useStyles = ClimateEngine_makeStyles(function (theme) { return
     },
 }); });
 var ClimateEngine = function () {
-    var ui = ClimateEngine_cgpv.ui, mui = ClimateEngine_cgpv.mui, react = ClimateEngine_cgpv.react, types = ClimateEngine_cgpv.types, api = ClimateEngine_cgpv.api, leaflet = ClimateEngine_cgpv.leaflet;
+    var ui = ClimateEngine_cgpv.ui, react = ClimateEngine_cgpv.react, types = ClimateEngine_cgpv.types, api = ClimateEngine_cgpv.api, leaflet = ClimateEngine_cgpv.leaflet;
     var tileLayer = leaflet.tileLayer;
     var useState = react.useState, useEffect = react.useEffect, useContext = react.useContext, useCallback = react.useCallback;
     var _a = useState(false), loaded = _a[0], setLoaded = _a[1];
@@ -18641,8 +18640,8 @@ var ClimateEngine = function () {
     var state = useContext(StateContext);
     var auth = state.auth, mapId = state.mapId, buttonPanel = state.buttonPanel;
     var apiKey = auth.apiKey, deleteApiKey = auth.deleteApiKey;
-    var _l = ui.elements, Button = _l.Button, CircularProgress = _l.CircularProgress;
-    var TextField = mui.TextField, Select = mui.Select, MenuItem = mui.MenuItem, ListSubheader = mui.ListSubheader;
+    var _l = ui.elements, Select = _l.Select, TextField = _l.TextField, Button = _l.Button, CircularProgress = _l.CircularProgress;
+    // const { ListSubheader } = mui;
     var classes = ClimateEngine_useStyles();
     var map = api.map(mapId).map;
     /**
@@ -18877,9 +18876,52 @@ var ClimateEngine = function () {
     };
     return ((0,jsx_runtime.jsxs)("div", { children: [(0,jsx_runtime.jsx)(Button, ClimateEngine_assign({ tooltip: "Logout", tooltipPlacement: "right", type: "text", variant: "contained", onClick: function () {
                     deleteApiKey();
-                } }, { children: "Logout" })), loaded && ((0,jsx_runtime.jsxs)("div", { children: [(0,jsx_runtime.jsxs)("fieldset", ClimateEngine_assign({ className: classes.fieldSetContainer }, { children: [(0,jsx_runtime.jsx)("legend", { children: "Variables" }), (0,jsx_runtime.jsxs)("div", { children: [(0,jsx_runtime.jsxs)("div", ClimateEngine_assign({ className: classes.fieldSetField }, { children: [(0,jsx_runtime.jsx)("label", ClimateEngine_assign({ htmlFor: "dataset" }, { children: "Dataset:" })), (0,jsx_runtime.jsxs)(Select, ClimateEngine_assign({ id: "dataset", value: dataset, onChange: function (e) { return getVariableByDataset(e.target.value); } }, { children: [(0,jsx_runtime.jsx)(ListSubheader, { children: "Landsat At-Surface Reflectance" }), (0,jsx_runtime.jsx)(MenuItem, ClimateEngine_assign({ value: "LANDSAT7_SR" }, { children: "Landsat 7 Surface Reflectance" })), (0,jsx_runtime.jsx)(MenuItem, ClimateEngine_assign({ value: "LANDSAT8_SR" }, { children: "Landsat 8 Surface Reflectance" })), (0,jsx_runtime.jsx)(ListSubheader, { children: "Landsat Top-Of-Atmosphere Reflectance" }), (0,jsx_runtime.jsx)(MenuItem, ClimateEngine_assign({ value: "LANDSAT7_TOA" }, { children: "Landsat 7 TOA Reflectance" })), (0,jsx_runtime.jsx)(MenuItem, ClimateEngine_assign({ value: "LANDSAT8_TOA" }, { children: "Landsat 8 TOA Reflectance" }))] }))] })), (0,jsx_runtime.jsxs)("div", ClimateEngine_assign({ className: classes.fieldSetField }, { children: [(0,jsx_runtime.jsx)("label", ClimateEngine_assign({ htmlFor: "variable" }, { children: "Variable:" })), (0,jsx_runtime.jsx)(Select, ClimateEngine_assign({ id: "variable", value: variable, onChange: function (e) { return setVariable(e.target.value); } }, { children: variables.map(function (item) {
-                                                    return ((0,jsx_runtime.jsx)(MenuItem, ClimateEngine_assign({ value: item }, { children: item }), item));
-                                                }) }))] }))] })] })), (0,jsx_runtime.jsxs)("fieldset", ClimateEngine_assign({ className: classes.fieldSetContainer }, { children: [(0,jsx_runtime.jsx)("legend", { children: "Time Period" }), (0,jsx_runtime.jsxs)("div", { children: [(0,jsx_runtime.jsxs)("div", { children: ["Range: ", minDate, " to ", maxDate] }), (0,jsx_runtime.jsxs)("div", ClimateEngine_assign({ className: classes.fieldSetField }, { children: [(0,jsx_runtime.jsx)("label", ClimateEngine_assign({ htmlFor: "startDate" }, { children: "Start Date:" })), (0,jsx_runtime.jsx)(TextField, { id: "startDate", type: "date", value: startDate, inputProps: { min: minDate, max: maxDate }, onChange: function (e) { return setStartDate(e.target.value); } })] })), (0,jsx_runtime.jsxs)("div", ClimateEngine_assign({ className: classes.fieldSetField }, { children: [(0,jsx_runtime.jsx)("label", ClimateEngine_assign({ htmlFor: "endDate" }, { children: "End Date:" })), (0,jsx_runtime.jsx)(TextField, { id: "endDate", type: "date", value: endDate, inputProps: { min: minDate, max: maxDate }, onChange: function (e) { return setEndDate(e.target.value); } })] }))] })] })), (0,jsx_runtime.jsx)(Button, ClimateEngine_assign({ tooltip: "Process Data", tooltipPlacement: "right", type: "text", variant: "contained", onClick: function () { return loadMapLayer(); } }, { children: "Process Data" }))] }))] }));
+                } }, { children: "Logout" })), loaded && ((0,jsx_runtime.jsxs)("div", { children: [(0,jsx_runtime.jsxs)("fieldset", ClimateEngine_assign({ className: classes.fieldSetContainer }, { children: [(0,jsx_runtime.jsx)("legend", { children: "Variables" }), (0,jsx_runtime.jsxs)("div", { children: [(0,jsx_runtime.jsxs)("div", ClimateEngine_assign({ className: classes.fieldSetField }, { children: [(0,jsx_runtime.jsx)("label", ClimateEngine_assign({ htmlFor: "dataset" }, { children: "Dataset:" })), (0,jsx_runtime.jsx)(Select, { id: "dataset", value: dataset, onChange: function (e) { return getVariableByDataset(e.target.value); }, menuItems: [
+                                                    {
+                                                        type: 'header',
+                                                        item: {
+                                                            children: 'Landsat At-Surface Reflectance',
+                                                        },
+                                                    },
+                                                    {
+                                                        item: {
+                                                            value: 'LANDSAT7_SR',
+                                                            children: 'Landsat 7 Surface Reflectance',
+                                                        },
+                                                    },
+                                                    {
+                                                        item: {
+                                                            value: 'LANDSAT8_SR',
+                                                            children: 'Landsat 8 Surface Reflectance',
+                                                        },
+                                                    },
+                                                    {
+                                                        type: 'header',
+                                                        item: {
+                                                            children: 'Landsat Top-Of-Atmosphere Reflectance',
+                                                        },
+                                                    },
+                                                    {
+                                                        item: {
+                                                            value: 'LANDSAT7_TOA',
+                                                            children: 'Landsat 7 TOA Reflectance',
+                                                        },
+                                                    },
+                                                    {
+                                                        item: {
+                                                            value: 'LANDSAT8_TOA',
+                                                            children: 'Landsat 8 TOA Reflectance',
+                                                        },
+                                                    },
+                                                ] })] })), (0,jsx_runtime.jsxs)("div", ClimateEngine_assign({ className: classes.fieldSetField }, { children: [(0,jsx_runtime.jsx)("label", ClimateEngine_assign({ htmlFor: "variable" }, { children: "Variable:" })), (0,jsx_runtime.jsx)(Select, { id: "variable", value: variable, onChange: function (e) { return setVariable(e.target.value); }, menuItems: variables.map(function (item) {
+                                                    return {
+                                                        key: item,
+                                                        item: {
+                                                            value: item,
+                                                            children: item,
+                                                        },
+                                                    };
+                                                }) })] }))] })] })), (0,jsx_runtime.jsxs)("fieldset", ClimateEngine_assign({ className: classes.fieldSetContainer }, { children: [(0,jsx_runtime.jsx)("legend", { children: "Time Period" }), (0,jsx_runtime.jsxs)("div", { children: [(0,jsx_runtime.jsxs)("div", { children: ["Range: ", minDate, " to ", maxDate] }), (0,jsx_runtime.jsxs)("div", ClimateEngine_assign({ className: classes.fieldSetField }, { children: [(0,jsx_runtime.jsx)("label", ClimateEngine_assign({ htmlFor: "startDate" }, { children: "Start Date:" })), (0,jsx_runtime.jsx)(TextField, { id: "startDate", type: "date", value: startDate, inputProps: { min: minDate, max: maxDate }, onChange: function (e) { return setStartDate(e.target.value); } })] })), (0,jsx_runtime.jsxs)("div", ClimateEngine_assign({ className: classes.fieldSetField }, { children: [(0,jsx_runtime.jsx)("label", ClimateEngine_assign({ htmlFor: "endDate" }, { children: "End Date:" })), (0,jsx_runtime.jsx)(TextField, { id: "endDate", type: "date", value: endDate, inputProps: { min: minDate, max: maxDate }, onChange: function (e) { return setEndDate(e.target.value); } })] }))] })] })), (0,jsx_runtime.jsx)(Button, ClimateEngine_assign({ tooltip: "Process Data", tooltipPlacement: "right", type: "text", variant: "contained", onClick: function () { return loadMapLayer(); } }, { children: "Process Data" }))] }))] }));
 };
 
 ;// CONCATENATED MODULE: ./src/components/CEPanelContent.tsx
