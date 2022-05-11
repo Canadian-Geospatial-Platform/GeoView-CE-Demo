@@ -5378,7 +5378,7 @@ var useStyles = Login_makeStyles(function (theme) { return ({
  * @returns {JSX.Element} a login component
  */
 var Login = function () {
-    var ui = cgpv.ui, react = cgpv.react, api = cgpv.api;
+    var ui = cgpv.ui, react = cgpv.react, api = cgpv.api, types = cgpv.types;
     var createRef = react.createRef, useContext = react.useContext;
     var textFieldRef = createRef();
     var state = useContext(StateContext);
@@ -5392,24 +5392,23 @@ var Login = function () {
         var res;
         return Login_generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, API.validateToken(textFieldRef.current.value)];
+                case 0:
+                    if (!(textFieldRef && textFieldRef.current)) return [3 /*break*/, 2];
+                    return [4 /*yield*/, API.validateToken(textFieldRef.current.value)];
                 case 1:
                     res = (_a.sent());
                     if (res.detail) {
-                        api.event.emit({
-                            event: api.eventNames.SNACKBAR.EVENT_SNACKBAR_OPEN,
-                            handlerName: mapId,
-                            message: {
-                                type: 'key',
-                                value: res.detail,
-                                params: [],
-                            },
-                        });
+                        api.event.emit(types.snackbarMessagePayload(api.eventNames.SNACKBAR.EVENT_SNACKBAR_OPEN, mapId, {
+                            type: 'key',
+                            value: res.detail,
+                            params: [],
+                        }));
                     }
                     else {
                         state.auth.saveApiKey(textFieldRef.current.value);
                     }
-                    return [2 /*return*/];
+                    _a.label = 2;
+                case 2: return [2 /*return*/];
             }
         });
     }); };
@@ -18663,15 +18662,11 @@ var ClimateEngine = function () {
                         layer.addTo(api.map(mapId).map);
                         setLoadedLayer(layer);
                         // once done, notify user
-                        api.event.emit({
-                            event: api.eventNames.SNACKBAR.EVENT_SNACKBAR_OPEN,
-                            handlerName: mapId,
-                            message: {
-                                type: 'key',
-                                value: 'Processing Finished',
-                                params: [],
-                            },
-                        });
+                        api.event.emit(types.snackbarMessagePayload(api.eventNames.SNACKBAR.EVENT_SNACKBAR_OPEN, mapId, {
+                            type: 'key',
+                            value: 'Processing Finished',
+                            params: [],
+                        }));
                     }
                     return [2 /*return*/];
             }
@@ -18712,15 +18707,11 @@ var ClimateEngine = function () {
                 case 1:
                     result = _a.sent();
                     if (!Array.isArray(result)) {
-                        api.event.emit({
-                            event: api.eventNames.SNACKBAR.EVENT_SNACKBAR_OPEN,
-                            handlerName: mapId,
-                            message: {
-                                type: 'key',
-                                value: 'No points found',
-                                params: [],
-                            },
-                        });
+                        api.event.emit(types.snackbarMessagePayload(api.eventNames.SNACKBAR.EVENT_SNACKBAR_OPEN, mapId, {
+                            type: 'key',
+                            value: 'No points found',
+                            params: [],
+                        }));
                     }
                     else {
                         labels = [];
@@ -18789,6 +18780,7 @@ var ClimateEngine = function () {
                     res = (_a.sent());
                     if (res.variables && res.variables.length > 0) {
                         ClimateEngine_cgpv.api.map('mapWM').modal.modals['chartContainerModal'].update({
+                            content: '',
                             header: {
                                 title: dataset,
                             },
@@ -18876,7 +18868,9 @@ var ClimateEngine = function () {
     };
     return ((0,jsx_runtime.jsxs)("div", { children: [(0,jsx_runtime.jsx)(Button, ClimateEngine_assign({ tooltip: "Logout", tooltipPlacement: "right", type: "text", variant: "contained", onClick: function () {
                     deleteApiKey();
-                } }, { children: "Logout" })), loaded && ((0,jsx_runtime.jsxs)("div", { children: [(0,jsx_runtime.jsxs)("fieldset", ClimateEngine_assign({ className: classes.fieldSetContainer }, { children: [(0,jsx_runtime.jsx)("legend", { children: "Variables" }), (0,jsx_runtime.jsxs)("div", { children: [(0,jsx_runtime.jsxs)("div", ClimateEngine_assign({ className: classes.fieldSetField }, { children: [(0,jsx_runtime.jsx)("label", ClimateEngine_assign({ htmlFor: "dataset" }, { children: "Dataset:" })), (0,jsx_runtime.jsx)(Select, { id: "dataset", value: dataset, onChange: function (e) { return getVariableByDataset(e.target.value); }, menuItems: [
+                } }, { children: "Logout" })), loaded && ((0,jsx_runtime.jsxs)("div", { children: [(0,jsx_runtime.jsxs)("fieldset", ClimateEngine_assign({ className: classes.fieldSetContainer }, { children: [(0,jsx_runtime.jsx)("legend", { children: "Variables" }), (0,jsx_runtime.jsxs)("div", { children: [(0,jsx_runtime.jsxs)("div", ClimateEngine_assign({ className: classes.fieldSetField }, { children: [(0,jsx_runtime.jsx)("label", ClimateEngine_assign({ htmlFor: "dataset" }, { children: "Dataset:" })), (0,jsx_runtime.jsx)(Select, { id: "dataset", value: dataset, onChange: function (e) { return getVariableByDataset(e.target.value); }, inputLabel: {
+                                                    id: 'select-dataset',
+                                                }, menuItems: [
                                                     {
                                                         type: 'header',
                                                         item: {
@@ -18913,7 +18907,9 @@ var ClimateEngine = function () {
                                                             children: 'Landsat 8 TOA Reflectance',
                                                         },
                                                     },
-                                                ] })] })), (0,jsx_runtime.jsxs)("div", ClimateEngine_assign({ className: classes.fieldSetField }, { children: [(0,jsx_runtime.jsx)("label", ClimateEngine_assign({ htmlFor: "variable" }, { children: "Variable:" })), (0,jsx_runtime.jsx)(Select, { id: "variable", value: variable, onChange: function (e) { return setVariable(e.target.value); }, menuItems: variables.map(function (item) {
+                                                ] })] })), (0,jsx_runtime.jsxs)("div", ClimateEngine_assign({ className: classes.fieldSetField }, { children: [(0,jsx_runtime.jsx)("label", ClimateEngine_assign({ htmlFor: "variable" }, { children: "Variable:" })), (0,jsx_runtime.jsx)(Select, { id: "variable", value: variable, onChange: function (e) { return setVariable(e.target.value); }, inputLabel: {
+                                                    id: 'select-variable',
+                                                }, menuItems: variables.map(function (item) {
                                                     return {
                                                         key: item,
                                                         item: {
@@ -18944,7 +18940,22 @@ var CEPanelContent_cgpv = CEPanelContent_w['cgpv'];
 var CEPanelContent_react = CEPanelContent_cgpv.react;
 var CEPanelContent_createContext = CEPanelContent_react.createContext;
 // context used to store and manage state
-var StateContext = CEPanelContent_createContext({});
+var StateContext = CEPanelContent_createContext({
+    auth: {
+        apiKey: '',
+        setApiKey: function (key) { },
+        saveApiKey: function (key) { },
+        getApiKey: function () { },
+        deleteApiKey: function () { },
+    },
+    mapId: '',
+    buttonPanel: {
+        id: '',
+        button: {
+            type: 'text',
+        },
+    },
+});
 /**
  * Create a new panel content
  *
@@ -18953,9 +18964,9 @@ var StateContext = CEPanelContent_createContext({});
  */
 var CEPanelContent = function (props) {
     var buttonPanel = props.buttonPanel, mapId = props.mapId;
-    var ui = CEPanelContent_cgpv.ui, mui = CEPanelContent_cgpv.mui, react = CEPanelContent_cgpv.react;
+    var ui = CEPanelContent_cgpv.ui, react = CEPanelContent_cgpv.react;
     var useState = react.useState, useEffect = react.useEffect, useMemo = react.useMemo;
-    var _a = useState(), apiKey = _a[0], setApiKey = _a[1];
+    var _a = useState(''), apiKey = _a[0], setApiKey = _a[1];
     /**
      * Save API key in local storage and login user
      *
@@ -18979,7 +18990,7 @@ var CEPanelContent = function (props) {
      */
     var deleteApiKey = function () {
         localStorage.removeItem('key');
-        auth.setApiKey(null);
+        auth.setApiKey('');
     };
     useEffect(function () {
         getApiKey();
@@ -19003,9 +19014,17 @@ const translation_namespaceObject = JSON.parse('{"custom":{"cePanelTitle":"Clima
 const fr_CA_translation_namespaceObject = JSON.parse('{"custom":{"cePanelTitle":"Climate Engine","geePanelTitle":"Google Earth Engine"}}');
 ;// CONCATENATED MODULE: ./src/components/App.tsx
 
+// import React, { useEffect, createContext, useState, useMemo } from 'react';
 
 
 
+// import { GEEPanelContent } from './GEEPanelContent';
+
+
+// get reference to window object
+var App_w = window;
+// get reference to geoview apis
+var App_cgpv = App_w['cgpv'];
 /**
  * main container and map styling
  */
@@ -19014,12 +19033,6 @@ var App_useStyles = makeStyles(function (theme) { return ({
         height: '100vh',
     },
 }); });
-// get reference to window object
-var App_w = window;
-// get reference to geoview apis
-var App_cgpv = App_w['cgpv'];
-
-
 /**
  * Create a container containing a leaflet map using the GeoView viewer
  *
