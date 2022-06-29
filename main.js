@@ -18623,8 +18623,7 @@ var ClimateEngine_useStyles = ClimateEngine_makeStyles(function (theme) { return
     },
 }); });
 var ClimateEngine = function () {
-    var ui = ClimateEngine_cgpv.ui, react = ClimateEngine_cgpv.react, types = ClimateEngine_cgpv.types, api = ClimateEngine_cgpv.api, leaflet = ClimateEngine_cgpv.leaflet;
-    var tileLayer = leaflet.tileLayer;
+    var ui = ClimateEngine_cgpv.ui, react = ClimateEngine_cgpv.react, types = ClimateEngine_cgpv.types, api = ClimateEngine_cgpv.api;
     var useState = react.useState, useEffect = react.useEffect, useContext = react.useContext, useCallback = react.useCallback;
     var _a = useState(false), loaded = _a[0], setLoaded = _a[1];
     var _b = useState(false), inProcess = _b[0], setInProcess = _b[1];
@@ -18643,11 +18642,12 @@ var ClimateEngine = function () {
     // const { ListSubheader } = mui;
     var classes = ClimateEngine_useStyles();
     var map = api.map(mapId).map;
+    var MapIcon = ui.elements.MapIcon;
     /**
      * Load the map layer for the selected date range on selected dataset and variable
      */
     var loadMapLayer = function () { return ClimateEngine_awaiter(void 0, void 0, void 0, function () {
-        var result, basemapUrl, layer;
+        var result, basemapUrl, layerId;
         return ClimateEngine_generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, API.getMapLayer(dataset, variable, startDate, endDate, apiKey)];
@@ -18657,10 +18657,15 @@ var ClimateEngine = function () {
                         basemapUrl = result.tile_fetcher;
                         // remove previous layer if exists
                         if (loadedLayer)
-                            map.removeLayer(loadedLayer);
-                        layer = tileLayer(basemapUrl);
-                        layer.addTo(api.map(mapId).map);
-                        setLoadedLayer(layer);
+                            api.map(mapId).layer.removeLayerById(loadedLayer);
+                        layerId = api.map(mapId).layer.addLayer({
+                            layerType: 'xyzTiles',
+                            url: {
+                                en: basemapUrl,
+                                fr: basemapUrl,
+                            },
+                        });
+                        setLoadedLayer(layerId);
                         // once done, notify user
                         api.event.emit(types.snackbarMessagePayload(api.eventNames.SNACKBAR.EVENT_SNACKBAR_OPEN, mapId, {
                             type: 'key',
@@ -18751,22 +18756,6 @@ var ClimateEngine = function () {
         });
     }); };
     /**
-     * Search if marker already exists on map
-     *
-     * @param {number} lat the latitude point
-     * @param {number} lng the longtitude point
-     */
-    var searchMarkers = function (lat, lng) {
-        var markers = api.map(mapId).layer.vector.geometries;
-        for (var i = 0; i < markers.length; i++) {
-            var markerPoint = markers[i]._latlng;
-            if (markerPoint.lat === lat && markerPoint.lng === lng) {
-                return true;
-            }
-        }
-        return false;
-    };
-    /**
      * Get the variables for the dataset
      *
      * @param {string} dataset the selected dataset
@@ -18794,6 +18783,17 @@ var ClimateEngine = function () {
             }
         });
     }); };
+    var mapClick = function (e) {
+        var _a, _b;
+        var point = e.coordinate;
+        var coordinate = api.projection.transformPoints(e.coordinate, 'EPSG:3857', 'EPSG:4326')[0];
+        // get time series at the click location and open a chart
+        getTimeSeries(coordinate[1], coordinate[0]);
+        (_a = api.map(mapId).layer.vector) === null || _a === void 0 ? void 0 : _a.deleteGeometry('clickPosition');
+        (_b = api
+            .map(mapId)
+            .layer.vector) === null || _b === void 0 ? void 0 : _b.addMarker([point[0], point[1]], {}, 'clickPosition');
+    };
     useEffect(function () {
         if (startDate.length && endDate.length && !loaded) {
             setLoaded(true);
@@ -18801,17 +18801,9 @@ var ClimateEngine = function () {
             loadMapLayer();
         }
         // listen to map click events
-        map.on('click', function (e) {
-            var point = e.latlng;
-            // get time series at the click location and open a chart
-            getTimeSeries(point.lat, point.lng);
-            api.map(mapId).layer.vector.deleteGeometry('clickPosition');
-            api
-                .map(mapId)
-                .layer.vector.addMarker(point.lat, point.lng, {}, 'clickPosition');
-        });
+        map.on('click', mapClick);
         return function () {
-            map.off('click');
+            map.un('click', mapClick);
         };
     }, [startDate, endDate, loaded, variable]);
     useEffect(function () {
@@ -18843,14 +18835,13 @@ var ClimateEngine = function () {
             id: modalId,
             tooltip: 'chart',
             tooltipPlacement: 'left',
-            icon: '<i class="material-icons">map</i>',
+            children: (0,jsx_runtime.jsx)(MapIcon, {}),
             visible: false,
-            type: 'icon',
         };
         // panel props
         var panel = {
             title: 'chart',
-            icon: '<i class="material-icons">map</i>',
+            icon: (0,jsx_runtime.jsx)(MapIcon, {}),
             width: 500,
         };
         // create a new button panel on the appbar
@@ -18951,9 +18942,7 @@ var StateContext = CEPanelContent_createContext({
     mapId: '',
     buttonPanel: {
         id: '',
-        button: {
-            type: 'text',
-        },
+        button: {},
     },
 });
 /**
@@ -19060,20 +19049,20 @@ var App = function () {
             mapInstance.i18nInstance.addResourceBundle('fr-CA', 'translation', translations['fr-CA'], true, false);
             // get language
             var language = mapInstance.language;
+            var MapIcon = App_cgpv.ui.elements.MapIcon;
             // button props
             var ceButton = {
                 // set ID to ceButtonPanel so that it can be accessed from the core viewer
                 id: 'ceButtonPanel',
                 tooltip: translations[language].custom.cePanelTitle,
                 tooltipPlacement: 'right',
-                icon: '<i class="material-icons">map</i>',
+                children: (0,jsx_runtime.jsx)(MapIcon, {}),
                 visible: true,
-                type: 'icon',
             };
             // panel props
             var cePanel = {
                 title: translations[language].custom.cePanelTitle,
-                icon: '<i class="material-icons">map</i>',
+                icon: (0,jsx_runtime.jsx)(MapIcon, {}),
                 width: 300,
             };
             // create a new button panel on the appbar
@@ -19112,7 +19101,7 @@ var App = function () {
     return ((0,jsx_runtime.jsx)("div", { id: "mapWM", className: "llwp-map ".concat(classes.container), style: {
             height: '100vh',
             zIndex: 0,
-        }, "data-lang": "en-CA", "data-config": "{\n        'map': {\n          'interaction': 'dynamic',\n          'initialView': {\n            'zoom': 4,\n            'center': [60, -100]\n          },\n          'projection': 3857,\n          'basemapOptions': {\n            'id': 'transport',\n            'shaded': false,\n            'labeled': true\n          },\n          'layers': []\n        },\n        'theme': 'dark',\n        'languages': ['en-CA']\n        }" }));
+        }, "data-lang": "en-CA", "data-config": "{\n        'map': {\n          'interaction': 'dynamic',\n          'initialView': {\n            'zoom': 4,\n            'center': [-100, 60]\n          },\n          'projection': 3857,\n          'basemapOptions': {\n            'id': 'transport',\n            'shaded': false,\n            'labeled': true\n          },\n          'layers': []\n        },\n        'theme': 'dark',\n        'languages': ['en-CA']\n        }" }));
 };
 /* harmony default export */ const components_App = (App);
 
