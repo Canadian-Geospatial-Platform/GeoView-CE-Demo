@@ -18615,6 +18615,7 @@ var ClimateEngine_useStyles = ClimateEngine_makeStyles(function (theme) { return
     fieldSetContainer: {
         marginTop: 10,
         marginBottom: 10,
+        maxWidth: 400,
     },
     fieldSetField: {
         display: 'flex',
@@ -18807,6 +18808,11 @@ var ClimateEngine = function () {
         };
     }, [startDate, endDate, loaded, variable]);
     useEffect(function () {
+        var panelContainerQuery = document.getElementsByClassName('MuiPaper-root');
+        if (panelContainerQuery && panelContainerQuery.length > 0) {
+            var panelContainer = panelContainerQuery[0];
+            panelContainer.style.width = 410 + 'px';
+        }
         createProcessProgressModal();
         createChartModal();
         getVariableByDataset(dataset);
@@ -18829,25 +18835,6 @@ var ClimateEngine = function () {
      * Create a chart modal
      */
     var createChartModal = function () {
-        var modalId = 'chartModal';
-        // button props
-        var button = {
-            id: modalId,
-            tooltip: 'chart',
-            tooltipPlacement: 'left',
-            children: (0,jsx_runtime.jsx)(MapIcon, {}),
-            visible: false,
-        };
-        // panel props
-        var panel = {
-            title: 'chart',
-            icon: (0,jsx_runtime.jsx)(MapIcon, {}),
-            width: 500,
-        };
-        // create a new button panel on the appbar
-        ClimateEngine_cgpv.api
-            .map('mapWM')
-            .navBarButtons.createNavbarButtonPanel(button, panel, 'charts');
         ClimateEngine_cgpv.api.map('mapWM').modal.createModal({
             id: 'chartContainerModal',
             content: (0,jsx_runtime.jsx)("canvas", { id: "chartContainer" }),
@@ -18908,7 +18895,15 @@ var ClimateEngine = function () {
                                                             children: item,
                                                         },
                                                     };
-                                                }) })] }))] })] })), (0,jsx_runtime.jsxs)("fieldset", ClimateEngine_assign({ className: classes.fieldSetContainer }, { children: [(0,jsx_runtime.jsx)("legend", { children: "Time Period" }), (0,jsx_runtime.jsxs)("div", { children: [(0,jsx_runtime.jsxs)("div", { children: ["Range: ", minDate, " to ", maxDate] }), (0,jsx_runtime.jsxs)("div", ClimateEngine_assign({ className: classes.fieldSetField }, { children: [(0,jsx_runtime.jsx)("label", ClimateEngine_assign({ htmlFor: "startDate" }, { children: "Start Date:" })), (0,jsx_runtime.jsx)(TextField, { id: "startDate", type: "date", value: startDate, inputProps: { min: minDate, max: maxDate }, onChange: function (e) { return setStartDate(e.target.value); } })] })), (0,jsx_runtime.jsxs)("div", ClimateEngine_assign({ className: classes.fieldSetField }, { children: [(0,jsx_runtime.jsx)("label", ClimateEngine_assign({ htmlFor: "endDate" }, { children: "End Date:" })), (0,jsx_runtime.jsx)(TextField, { id: "endDate", type: "date", value: endDate, inputProps: { min: minDate, max: maxDate }, onChange: function (e) { return setEndDate(e.target.value); } })] }))] })] })), (0,jsx_runtime.jsx)(Button, ClimateEngine_assign({ tooltip: "Process Data", tooltipPlacement: "right", type: "text", variant: "contained", onClick: function () { return loadMapLayer(); } }, { children: "Process Data" }))] }))] }));
+                                                }) })] }))] })] })), (0,jsx_runtime.jsxs)("fieldset", ClimateEngine_assign({ className: classes.fieldSetContainer }, { children: [(0,jsx_runtime.jsx)("legend", { children: "Time Period" }), (0,jsx_runtime.jsxs)("div", { children: [(0,jsx_runtime.jsxs)("div", { children: ["Range: ", minDate, " to ", maxDate] }), (0,jsx_runtime.jsxs)("div", ClimateEngine_assign({ className: classes.fieldSetField }, { children: [(0,jsx_runtime.jsx)("label", ClimateEngine_assign({ htmlFor: "startDate" }, { children: "Start Date:" })), (0,jsx_runtime.jsx)(TextField, { id: "startDate", type: "date", value: startDate, inputProps: {
+                                                    min: minDate,
+                                                    max: maxDate,
+                                                    style: { color: '#fff' },
+                                                }, onChange: function (e) { return setStartDate(e.target.value); } })] })), (0,jsx_runtime.jsxs)("div", ClimateEngine_assign({ className: classes.fieldSetField }, { children: [(0,jsx_runtime.jsx)("label", ClimateEngine_assign({ htmlFor: "endDate" }, { children: "End Date:" })), (0,jsx_runtime.jsx)(TextField, { id: "endDate", type: "date", value: endDate, inputProps: {
+                                                    min: minDate,
+                                                    max: maxDate,
+                                                    style: { color: '#fff' },
+                                                }, onChange: function (e) { return setEndDate(e.target.value); } })] }))] })] })), (0,jsx_runtime.jsx)(Button, ClimateEngine_assign({ tooltip: "Process Data", tooltipPlacement: "right", type: "text", variant: "contained", onClick: function () { return loadMapLayer(); } }, { children: "Process Data" }))] }))] }));
 };
 
 ;// CONCATENATED MODULE: ./src/components/CEPanelContent.tsx
@@ -19063,7 +19058,7 @@ var App = function () {
             var cePanel = {
                 title: translations[language].custom.cePanelTitle,
                 icon: (0,jsx_runtime.jsx)(MapIcon, {}),
-                width: 300,
+                width: 500,
             };
             // create a new button panel on the appbar
             var ceButtonPanel = App_cgpv.api
